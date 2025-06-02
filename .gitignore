@@ -1,0 +1,5 @@
+# Ignorar la carpeta del entorno virtual de Python
+venv/
+
+# Ignorar el archivo de variables de entorno
+.env

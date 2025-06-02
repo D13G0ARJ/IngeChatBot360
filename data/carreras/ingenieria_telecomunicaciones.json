@@ -1,0 +1,40 @@
+{
+  "nombre": "Ingeniería en Telecomunicaciones",
+  "regimen": "Diurno",
+  "descripcion": "La Ingeniería en Telecomunicaciones de la UNEFA forma profesionales especializados en el diseño, desarrollo, implementación, operación y mantenimiento de sistemas y redes de comunicación. Abarca desde la transmisión de voz y datos hasta la gestión de sistemas inalámbricos, satelitales y de fibra óptica, preparando al ingeniero para los desafíos de la conectividad moderna.",
+  "perfil_egresado": "El egresado de Ingeniería en Telecomunicaciones está capacitado para trabajar en el diseño, planificación e implementación de infraestructuras de comunicación, redes de datos, sistemas de radiodifusión, telefonía móvil y fija, y soluciones de Internet. Posee conocimientos en procesamiento de señales, electrónica de comunicaciones y seguridad de redes.",
+  "salidas_profesionales": [
+    "Ingeniero de Redes",
+    "Especialista en Sistemas Inalámbricos",
+    "Ingeniero de Proyectos de Telecomunicaciones",
+    "Analista de Ciberseguridad en Redes",
+    "Consultor en Conectividad",
+    "Diseñador de Sistemas de Comunicación",
+    "Gerente de Operaciones de Redes",
+    "Investigador en Nuevas Tecnologías de Comunicación"
+  ],
+  "duracion": "10 semestres (5 años)",
+  "unidades_credito_totales": "Aproximadamente 220-230 UC (dato estimado)",
+  "plan_estudios": {
+    "1°_semestre": [
+      {"asignatura": "Matemática I"},
+      {"asignatura": "Física I"},
+      {"asignatura": "Circuitos Eléctricos I"},
+      {"asignatura": "Programación Básica"}
+    ],
+    "semestres_intermedios": [
+      {"asignatura": "Teoría de Comunicaciones"},
+      {"asignatura": "Redes de Datos"},
+      {"asignatura": "Sistemas Inalámbricos"},
+      {"asignatura": "Procesamiento Digital de Señales"},
+      {"asignatura": "Microondas y Antenas"}
+    ],
+    "semestres_avanzados": [
+      {"asignatura": "Seguridad en Redes"},
+      {"asignatura": "Redes de Próxima Generación"},
+      {"asignatura": "Comunicaciones Satelitales"},
+      {"asignatura": "Sistemas de Radio y Televisión"},
+      {"asignatura": "Trabajo Especial de Grado"}
+    ]
+  }
+}

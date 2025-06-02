@@ -1,0 +1,55 @@
+[
+  {
+    "prompt": "¿Qué es la Ingeniería de Sistemas en la UNEFA?",
+    "completion": "La Ingeniería de Sistemas en la UNEFA forma profesionales capacitados para diseñar, implementar y gestionar sistemas computarizados, así como para analizar, desarrollar y optimizar soluciones tecnológicas en diversas áreas. El programa se enfoca en una sólida base en matemáticas, programación y ciencias de la computación, preparando al egresado para el campo laboral y la investigación en el ámbito tecnológico."
+  },
+  {
+    "prompt": "Háblame del plan de estudios de Ingeniería de Sistemas.",
+    "completion": "El plan de estudios de Ingeniería de Sistemas en la UNEFA tiene una duración de 10 semestres (5 años) y abarca asignaturas desde Programación I, Matemáticas, Física, hasta temas avanzados como Bases de Datos, Redes, Sistemas Operativos, Inteligencia Artificial y Trabajo Especial de Grado. Para una lista detallada, te recomiendo consultar el pensum oficial."
+  },
+  {
+    "prompt": "¿Cuál es el perfil del egresado de Ingeniería de Sistemas?",
+    "completion": "El egresado de Ingeniería de Sistemas de la UNEFA está preparado para desempeñarse en el diseño, desarrollo, implementación, mantenimiento y gestión de sistemas de información, software y hardware. Posee competencias en análisis de datos, ciberseguridad, redes, sistemas operativos y gestión de proyectos tecnológicos."
+  },
+  {
+    "prompt": "¿Qué salidas profesionales tiene Ingeniería de Sistemas?",
+    "completion": "Algunas salidas profesionales para Ingeniería de Sistemas incluyen: Desarrollador de Software (Frontend, Backend, Fullstack), Analista de Sistemas, Administrador de Bases de Datos, Especialista en Redes y Ciberseguridad, Ingeniero de Software, Consultor Tecnológico, Especialista en Simulación y Modelos, Auditor de Sistemas y Gerente de Informática."
+  },
+  {
+    "prompt": "¿Cuántos semestres dura Ingeniería de Sistemas?",
+    "completion": "La carrera de Ingeniería de Sistemas en la UNEFA tiene una duración de 10 semestres, lo que equivale a 5 años."
+  },
+  {
+    "prompt": "¿Qué se estudia en Ingeniería Mecánica?",
+    "completion": "La Ingeniería Mecánica en la UNEFA se enfoca en el diseño, análisis, fabricación y mantenimiento de sistemas mecánicos. Incluye áreas como termodinámica, mecánica de fluidos, diseño de máquinas y sistemas de manufactura. Para más detalles, consulta el pensum de Ingeniería Mecánica."
+  },
+  {
+    "prompt": "Dime sobre Ingeniería en Telecomunicaciones.",
+    "completion": "La Ingeniería en Telecomunicaciones en la UNEFA forma profesionales en el diseño, implementación y gestión de sistemas de comunicación, incluyendo redes, telefonía, radio y televisión. Se abordan temas de transmisión de datos, procesamiento de señales y sistemas inalámbricos. Puedes preguntar sobre su perfil o plan de estudios."
+  },
+  {
+    "prompt": "¿Qué hace un Ingeniero Eléctrico?",
+    "completion": "Un Ingeniero Eléctrico de la UNEFA se dedica al diseño, desarrollo, operación y mantenimiento de sistemas eléctricos y electrónicos. Esto incluye la generación, transmisión y distribución de energía, así como sistemas de control y automatización. Si deseas, puedo darte más detalles sobre su perfil de egresado o plan de estudios."
+  },
+  {
+    "prompt": "¿Cuáles son los requisitos de inscripción para las carreras de ingeniería?",
+    "completion": "Los requisitos de inscripción para las carreras de ingeniería en la UNEFA incluyen título de bachiller, notas certificadas, copia de cédula de identidad y fotos tipo carnet. Te sugiero visitar la oficina de atención estudiantil o el portal web de la UNEFA para obtener la lista más actualizada y completa de documentos."
+  },
+  {
+    "prompt": "¿Dónde está ubicada la UNEFA Núcleo Miranda, Sede Los Teques?",
+    "completion": "La UNEFA Núcleo Miranda, Sede Los Teques, está ubicada en Los Teques, Miranda, Venezuela. La dirección exacta y puntos de referencia pueden ser consultados directamente en la sede o en el sitio web oficial de la UNEFA."
+  },
+  {
+    "prompt": "¿Cuál es la misión de la UNEFA?",
+    "completion": "La UNEFA, a través de iniciativas como IngeChat 360°, busca modernizar y optimizar los procesos de divulgación de información académica y profesional, ofreciendo acceso inmediato, interactivo y personalizado a información clave sobre sus carreras de Ingeniería. Su misión es superar las limitaciones de los métodos tradicionales y fortalecer la transparencia, vinculación y eficiencia en la gestión educativa."
+  },
+  {
+    "prompt": "¿Cómo puedo contactar a la UNEFA?",
+    "completion": "La información de contacto específica (teléfono, correo electrónico) no está detallada en mis datos actuales. Te recomiendo visitar el sitio web oficial de la UNEFA o dirigirte directamente a la sede de Los Teques para obtener los datos de contacto más precisos."
+  },
+  {
+    "prompt": "¿Qué es IngeChat 360°?",
+    "completion": "IngeChat 360° es un chatbot interactivo desarrollado para la UNEFA Núcleo Miranda, Sede Los Teques. Su propósito es optimizar la divulgación de información integral sobre las carreras de Ingeniería (Sistemas, Mecánica, Telecomunicaciones y Eléctrica) y mejorar la orientación académica y profesional de los estudiantes."
+  }
+
+]

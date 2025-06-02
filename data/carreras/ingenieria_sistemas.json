@@ -1,0 +1,98 @@
+{
+  "nombre": "Ingeniería de Sistemas",
+  "regimen": "Diurno",
+  "vigencia_pensum": "2010",
+  "descripcion": "La Ingeniería de Sistemas en la UNEFA forma profesionales capacitados para diseñar, implementar y gestionar sistemas computarizados, así como para analizar, desarrollar y optimizar soluciones tecnológicas en diversas áreas. El programa se enfoca en una sólida base en matemáticas, programación y ciencias de la computación, preparando al egresado para el campo laboral y la investigación en el ámbito tecnológico.",
+  "perfil_egresado": "El egresado de Ingeniería de Sistemas de la UNEFA está preparado para desempeñarse en el diseño, desarrollo, implementación, mantenimiento y gestión de sistemas de información, software y hardware. Posee competencias en análisis de datos, redes, sistemas operativos, inteligencia artificial y gestión de proyectos tecnológicos, siendo capaz de integrar soluciones innovadoras en el contexto empresarial y social.",
+  "salidas_profesionales": [
+    "Desarrollador de Software (Frontend, Backend, Fullstack)",
+    "Analista de Sistemas",
+    "Administrador de Bases de Datos",
+    "Especialista en Redes y Ciberseguridad",
+    "Ingeniero de Software",
+    "Consultor Tecnológico",
+    "Especialista en Simulación y Modelos",
+    "Auditor de Sistemas",
+    "Gerente de Informática",
+    "Investigador en Áreas de Tecnología"
+  ],
+  "duracion": "10 semestres (5 años)",
+  "unidades_credito_totales": "224 UC",
+  "plan_estudios": {
+    "1°_semestre": [
+      {"codigo": "ADG-25132", "asignatura": "Educación Ambiental", "uc": 2},
+      {"codigo": "ADG-25123", "asignatura": "Hombre, Sociedad, Ciencia y Tec.", "uc": 2},
+      {"codigo": "IDM-24113", "asignatura": "Inglés I", "uc": 3},
+      {"codigo": "MAT-21212", "asignatura": "Dibujo", "uc": 2},
+      {"codigo": "MAT-21215", "asignatura": "Matemática I", "uc": 5},
+      {"codigo": "MAT-21524", "asignatura": "Geometría Analítica", "uc": 4},
+      {"codigo": "ADG-25131", "asignatura": "Seminario I", "uc": 1},
+      {"codigo": "DIN-21113", "asignatura": "Defensa Integral de la Nación I", "uc": 3}
+    ],
+    "2°_semestre": [
+      {"codigo": "IDM-24123", "asignatura": "Inglés II", "uc": 3},
+      {"codigo": "QUF-22014", "asignatura": "Química General", "uc": 4},
+      {"codigo": "QUF-23015", "asignatura": "Física I", "uc": 5},
+      {"codigo": "MAT-21225", "asignatura": "Matemática II", "uc": 5},
+      {"codigo": "MAT-21114", "asignatura": "Álgebra Lineal", "uc": 4},
+      {"codigo": "ADG-25141", "asignatura": "Seminario II", "uc": 1},
+      {"codigo": "DIN-21123", "asignatura": "Defensa Integral de la Nación II", "uc": 3}
+    ],
+    "3°_semestre": [
+      {"codigo": "QUF-23025", "asignatura": "Física II", "uc": 5},
+      {"codigo": "MAT-21235", "asignatura": "Matemática III", "uc": 5},
+      {"codigo": "MAT-21414", "asignatura": "Probabilidades y Estadística", "uc": 4},
+      {"codigo": "SYC-22113", "asignatura": "Programación", "uc": 4},
+      {"codigo": "AGG-22313", "asignatura": "Sistemas Administrativos", "uc": 3},
+      {"codigo": "DIN-21133", "asignatura": "Defensa Integral de la Nación III", "uc": 3}
+    ],
+    "4°_semestre": [
+      {"codigo": "SYC-32114", "asignatura": "Teoría de los Sistemas", "uc": 4},
+      {"codigo": "MAT-31714", "asignatura": "Cálculo Numérico", "uc": 4},
+      {"codigo": "MAT-31214", "asignatura": "Lógica Matemática", "uc": 4},
+      {"codigo": "SYC-32225", "asignatura": "Lenguajes de Programación I", "uc": 5},
+      {"codigo": "SYC-32414", "asignatura": "Procesamiento de Datos", "uc": 4},
+      {"codigo": "AGL-30214", "asignatura": "Sistemas de Producción", "uc": 4},
+      {"codigo": "DIN-31143", "asignatura": "Defensa Integral de la Nación IV", "uc": 3}
+    ],
+    "5°_semestre": [
+      {"codigo": "MAT-31114", "asignatura": "Teoría de Grafos", "uc": 4},
+      {"codigo": "SYC-32235", "asignatura": "Lenguajes de Programación II", "uc": 5},
+      {"codigo": "MAT-30925", "asignatura": "Investigación de Operaciones", "uc": 5},
+      {"codigo": "ELN-30514", "asignatura": "Circuitos Lógicos", "uc": 4},
+      {"codigo": "SYC-32514", "asignatura": "Análisis de Sistemas", "uc": 4},
+      {"codigo": "SYC-32614", "asignatura": "Bases de Datos", "uc": 4},
+      {"codigo": "DIN-31153", "asignatura": "Defensa Integral de la Nación V", "uc": 3}
+    ],
+    "6°_semestre": [
+      {"codigo": "MAT-30935", "asignatura": "Optimización No Lineal", "uc": 5},
+      {"codigo": "SYC-32245", "asignatura": "Lenguajes de Programación III", "uc": 5},
+      {"codigo": "MAT-31414", "asignatura": "Procesos Estocásticos", "uc": 3},
+      {"codigo": "SYC-30525", "asignatura": "Arquitectura del Computador", "uc": 4},
+      {"codigo": "SYC-32524", "asignatura": "Diseño de Sistemas", "uc": 4},
+      {"codigo": "SYC-30834", "asignatura": "Sistemas Operativos", "uc": 4},
+      {"codigo": "DIN-31163", "asignatura": "Defensa Integral de la Nación VI", "uc": 3}
+    ],
+    "7°_semestre": [
+      {"codigo": "SYC-32714", "asignatura": "Implantación de Sistemas", "uc": 4},
+      {"codigo": "ADG-30214", "asignatura": "Metodología de la Investigación", "uc": 3},
+      {"codigo": "MAT-30945", "asignatura": "Simulación y Modelos", "uc": 4},
+      {"codigo": "SYC-31644", "asignatura": "Redes", "uc": 4},
+      {"codigo": "ADG-30224", "asignatura": "Gerencia de la Informática", "uc": 4},
+      {"asignatura": "Electiva Técnica", "uc": 3},
+      {"asignatura": "Electiva No Técnica", "uc": 3},
+      {"codigo": "DIN-31173", "asignatura": "Defensa Integral de la Nación VII", "uc": 3}
+    ],
+    "8°_semestre": [
+      {"codigo": "MAT-31314", "asignatura": "Teoría de Decisiones", "uc": 4},
+      {"codigo": "SYC-32814", "asignatura": "Auditoría de Sistemas", "uc": 4},
+      {"codigo": "CJU-37314", "asignatura": "Marco Legal para el Ejercicio de la Ingeniería", "uc": 4},
+      {"codigo": "TTC-31154", "asignatura": "Teleprocesos", "uc": 4},
+      {"asignatura": "Electiva Técnica", "uc": 3},
+      {"codigo": "DIN-31183", "asignatura": "Defensa Integral de la Nación VIII", "uc": 3}
+    ],
+    "9°_semestre": [
+      {"codigo": "TGR-30010", "asignatura": "Trabajo Especial de Grado", "uc": 10}
+    ]
+  }
+}

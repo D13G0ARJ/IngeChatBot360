@@ -1,0 +1,40 @@
+{
+  "nombre": "Ingeniería Eléctrica",
+  "regimen": "Diurno",
+  "descripcion": "La Ingeniería Eléctrica de la UNEFA prepara a profesionales para el diseño, análisis, operación y mantenimiento de sistemas eléctricos y electrónicos. El programa cubre desde la generación, transmisión y distribución de energía eléctrica hasta la electrónica de potencia, control, automatización y energías renovables, siendo fundamental para la infraestructura energética del país.",
+  "perfil_egresado": "El ingeniero eléctrico egresado de la UNEFA es un experto en el manejo de la energía. Está capacitado para diseñar y supervisar instalaciones eléctricas, sistemas de control industrial, automatización, electrónica de potencia y proyectos de energías alternativas. Puede gestionar proyectos de electrificación y contribuir al desarrollo de soluciones tecnológicas en el sector energético.",
+  "salidas_profesionales": [
+    "Ingeniero de Proyectos Eléctricos",
+    "Especialista en Sistemas de Potencia",
+    "Ingeniero de Control y Automatización",
+    "Diseñador de Instalaciones Eléctricas",
+    "Consultor en Eficiencia Energética",
+    "Ingeniero de Mantenimiento Eléctrico",
+    "Especialista en Energías Renovables",
+    "Investigador en Tecnología Eléctrica"
+  ],
+  "duracion": "10 semestres (5 años)",
+  "unidades_credito_totales": "Aproximadamente 220-230 UC (dato estimado)",
+  "plan_estudios": {
+    "1°_semestre": [
+      {"asignatura": "Matemática I"},
+      {"asignatura": "Física I"},
+      {"asignatura": "Circuitos Eléctricos I"},
+      {"asignatura": "Introducción a la Ingeniería Eléctrica"}
+    ],
+    "semestres_intermedios": [
+      {"asignatura": "Máquinas Eléctricas"},
+      {"asignatura": "Sistemas de Potencia"},
+      {"asignatura": "Electrónica de Potencia"},
+      {"asignatura": "Control y Automatización"},
+      {"asignatura": "Instrumentación"}
+    ],
+    "semestres_avanzados": [
+      {"asignatura": "Protecciones Eléctricas"},
+      {"asignatura": "Diseño de Sistemas Eléctricos"},
+      {"asignatura": "Energías Renovables"},
+      {"asignatura": "Electrónica Digital y Microprocesadores"},
+      {"asignatura": "Trabajo Especial de Grado"}
+    ]
+  }
+}

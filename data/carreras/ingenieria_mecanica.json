@@ -1,0 +1,40 @@
+{
+  "nombre": "Ingeniería Mecánica",
+  "regimen": "Diurno",
+  "descripcion": "La Ingeniería Mecánica de la UNEFA forma profesionales con capacidad para diseñar, analizar, fabricar, mantener y operar sistemas mecánicos, térmicos y fluidos. La carrera aborda principios de termodinámica, mecánica de fluidos, diseño de máquinas, materiales y procesos de manufactura, preparando al ingeniero para la industria, la energía y la automatización.",
+  "perfil_egresado": "El egresado en Ingeniería Mecánica es competente en el diseño de componentes y sistemas mecánicos, la optimización de procesos de manufactura, la gestión de proyectos de ingeniería, el análisis de sistemas energéticos y la implementación de soluciones de automatización. Puede trabajar en sectores como la automoción, la energía, la manufactura y la robótica.",
+  "salidas_profesionales": [
+    "Ingeniero de Diseño Mecánico",
+    "Ingeniero de Mantenimiento Industrial",
+    "Especialista en Energía y Termofluidos",
+    "Ingeniero de Manufactura",
+    "Diseñador de Sistemas HVAC (Calefacción, Ventilación y Aire Acondicionado)",
+    "Ingeniero de Proyectos Mecánicos",
+    "Consultor de Procesos Industriales",
+    "Investigador en Materiales o Diseño"
+  ],
+  "duracion": "10 semestres (5 años)",
+  "unidades_credito_totales": "Aproximadamente 220-230 UC (dato estimado)",
+  "plan_estudios": {
+    "1°_semestre": [
+      {"asignatura": "Matemática I"},
+      {"asignatura": "Física I"},
+      {"asignatura": "Dibujo Técnico"},
+      {"asignatura": "Introducción a la Ingeniería Mecánica"}
+    ],
+    "semestres_intermedios": [
+      {"asignatura": "Mecánica de Sólidos"},
+      {"asignatura": "Termodinámica"},
+      {"asignatura": "Mecánica de Fluidos"},
+      {"asignatura": "Diseño de Elementos de Máquinas"},
+      {"asignatura": "Materiales de Ingeniería"}
+    ],
+    "semestres_avanzados": [
+      {"asignatura": "Sistemas de Manufactura"},
+      {"asignatura": "Vibraciones Mecánicas"},
+      {"asignatura": "Transferencia de Calor"},
+      {"asignatura": "Sistemas Neumáticos e Hidráulicos"},
+      {"asignatura": "Trabajo Especial de Grado"}
+    ]
+  }
+}
