@@ -15,7 +15,7 @@ class MainWindow(ctk.CTk):
         super().__init__()
         self.title("IngeChat 360° - UNEFA")
         self.geometry("800x700")
-        self.minsize(600, 600)
+        self.minsize(600, 600) # Permite al usuario redimensionar la ventana, con un tamaño mínimo
 
         # Configurar modo de apariencia inicial (claro)
         ctk.set_appearance_mode("light") 
@@ -28,7 +28,6 @@ class MainWindow(ctk.CTk):
         self.border_color_subtle = "#D0D0D0" 
 
         # Colores que cambiarán con el tema (se actualizarán en _update_theme_colors)
-        # Inicializados aquí, pero sus valores se establecerán correctamente en _update_theme_colors
         self.dynamic_bg_color = ""
         self.dynamic_text_color = ""
         self.chat_area_dynamic_bg = ""
@@ -43,9 +42,11 @@ class MainWindow(ctk.CTk):
         self.typing_indicator_visible = False
         self.typing_dots = []
         self.typing_animation_id = None
+        
+        # Atributo para el marco de botones de respuesta rápida
+        self.quick_reply_frame = None 
 
         self._load_assets()
-        # CORRECCIÓN CLAVE: Llamar a _update_theme_colors ANTES de _create_widgets
         self._update_theme_colors() 
         self._create_widgets()
         self._initial_message()
@@ -78,7 +79,6 @@ class MainWindow(ctk.CTk):
 
     def _create_widgets(self):
         """Crea y posiciona todos los widgets de la interfaz."""
-        # Usar colores dinámicos para fondos que cambian con el tema
         self.main_frame = ctk.CTkFrame(self, fg_color=self.dynamic_bg_color) 
         self.main_frame.pack(fill=ctk.BOTH, expand=True, padx=15, pady=15)
 
@@ -101,7 +101,6 @@ class MainWindow(ctk.CTk):
                                     corner_radius=8)
         restart_btn.pack(side=ctk.RIGHT, padx=(0, 15), pady=0)
 
-        # Selector de Tema (Modo Claro/Oscuro)
         self.appearance_mode_switch = ctk.CTkSwitch(
             header_frame, 
             text="Modo Oscuro", 
@@ -114,24 +113,27 @@ class MainWindow(ctk.CTk):
         )
         self.appearance_mode_switch.pack(side=ctk.RIGHT, padx=(0, 15), pady=0)
 
-        # Usar color dinámico para el fondo del área de chat
         self.chat_display_frame = ScrollableFrame(self.main_frame, fg_color=self.chat_area_dynamic_bg)
         self.chat_display_frame.pack(fill=ctk.BOTH, expand=True, pady=10, padx=5)
 
         self.typing_indicator_frame = ctk.CTkFrame(self.chat_display_frame.frame, fg_color="transparent")
         self.typing_indicator_label = ctk.CTkLabel(self.typing_indicator_frame, text="IngeChat 360° está escribiendo", 
                                                    font=ctk.CTkFont("Arial", 10, weight="normal", slant="italic"), 
-                                                   text_color=self.typing_indicator_dynamic_color) # Color dinámico
+                                                   text_color=self.typing_indicator_dynamic_color)
         self.typing_indicator_label.pack(side=ctk.LEFT, padx=(5,2), pady=5)
         
         for i in range(3):
-            dot = ctk.CTkLabel(self.typing_indicator_frame, text="•", font=ctk.CTkFont("Arial", 14, "bold"), text_color=self.typing_indicator_dynamic_color) # Color dinámico
+            dot = ctk.CTkLabel(self.typing_indicator_frame, text="•", font=ctk.CTkFont("Arial", 14, "bold"), text_color=self.typing_indicator_dynamic_color)
             dot.pack(side=ctk.LEFT, pady=5)
             self.typing_dots.append(dot)
         
         self.typing_indicator_frame.pack_forget()
 
-        # Usar colores dinámicos para el campo de entrada
+        # Marco para los botones de respuesta rápida (inicialmente oculto)
+        self.quick_reply_frame = ctk.CTkFrame(self.chat_display_frame.frame, fg_color="transparent")
+        self.quick_reply_frame.pack(fill=ctk.X, pady=(5, 10), padx=5, anchor=ctk.W)
+        self.quick_reply_frame.pack_forget() # Ocultar al inicio
+
         self.input_frame = ctk.CTkFrame(self.main_frame, fg_color=self.chat_area_dynamic_bg, corner_radius=10, border_width=1, border_color=self.border_color_subtle)
         self.input_frame.pack(fill=ctk.X, pady=(10, 0))
 
@@ -139,8 +141,8 @@ class MainWindow(ctk.CTk):
             self.input_frame,
             font=ctk.CTkFont("Arial", 11),
             placeholder_text="Escribe tu mensaje...",
-            fg_color=self.chat_area_dynamic_bg, # Fondo del campo de entrada dinámico
-            text_color=self.dynamic_text_color, # Color del texto dinámico
+            fg_color=self.chat_area_dynamic_bg,
+            text_color=self.dynamic_text_color,
             border_color=self.secondary_blue,
             corner_radius=8,
             border_width=1
@@ -170,21 +172,69 @@ class MainWindow(ctk.CTk):
             "¿En qué carrera estás interesado hoy? O puedes preguntar sobre requisitos de inscripción, perfil del egresado, etc."
         )
         self._add_message(welcome_message, is_user=False)
+        # Sugerir botones después del mensaje de bienvenida
+        self.after(500, lambda: self._add_quick_reply_buttons(["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"]))
+
 
     def _add_message(self, message, is_user):
         """Agrega un mensaje al área de visualización del chat."""
+        # Limpiar botones de respuesta rápida anteriores antes de añadir un nuevo mensaje
+        self._clear_quick_reply_buttons() 
+
         bubble = ChatBubble(
             self.chat_display_frame.frame,
             message,
             is_user,
             avatar_path=self.user_avatar_path if is_user else self.bot_avatar_path,
-            chat_area_bg=self.chat_area_dynamic_bg # Pasar el color dinámico del área de chat
+            chat_area_bg=self.chat_area_dynamic_bg
         )
         bubble.pack(fill=ctk.X, pady=5, padx=5, anchor=ctk.NW if not is_user else ctk.NE)
         self.chat_display_frame.canvas.update_idletasks()
         self.chat_display_frame.canvas.yview_moveto(1.0)
         
         bubble.start_animation()
+
+    def _add_quick_reply_buttons(self, suggestions):
+        """Añade botones de respuesta rápida al área de chat."""
+        self._clear_quick_reply_buttons() # Limpiar cualquier botón existente
+
+        if not suggestions:
+            return
+
+        self.quick_reply_frame.pack(fill=ctk.X, pady=(5, 10), padx=5, anchor=ctk.W)
+        
+        # Crear un frame interno para los botones para que se distribuyan bien
+        buttons_container = ctk.CTkFrame(self.quick_reply_frame, fg_color="transparent")
+        buttons_container.pack(fill=ctk.X, padx=5, pady=5)
+
+        for text in suggestions:
+            button = ctk.CTkButton(
+                buttons_container,
+                text=text,
+                command=lambda t=text: self._quick_reply_button_clicked(t),
+                fg_color=self.secondary_blue,
+                hover_color=self.primary_blue,
+                text_color=self.white_color,
+                corner_radius=8,
+                font=ctk.CTkFont("Arial", 10, "bold")
+            )
+            button.pack(side=ctk.LEFT, padx=5, pady=5) # Empaquetar horizontalmente
+
+        # Asegurarse de que el scroll vaya hasta el final para ver los botones
+        self.chat_display_frame.canvas.update_idletasks()
+        self.chat_display_frame.canvas.yview_moveto(1.0)
+
+    def _clear_quick_reply_buttons(self):
+        """Elimina todos los botones de respuesta rápida existentes."""
+        for widget in self.quick_reply_frame.winfo_children():
+            widget.destroy()
+        self.quick_reply_frame.pack_forget() # Ocultar el marco de botones
+
+    def _quick_reply_button_clicked(self, text):
+        """Maneja el clic en un botón de respuesta rápida."""
+        self.user_input.delete(0, ctk.END) # Limpiar campo de entrada
+        self.user_input.insert(0, text) # Insertar texto del botón
+        self._send_message() # Enviar como si el usuario lo hubiera escrito
 
     def _show_typing_indicator(self):
         if not self.typing_indicator_visible:
@@ -228,7 +278,7 @@ class MainWindow(ctk.CTk):
             return
 
         self.user_input.delete(0, ctk.END)
-        self._add_message(user_text, is_user=True)
+        self._add_message(user_text, is_user=True) # _add_message ya limpia los botones
 
         self.user_input.configure(state=ctk.DISABLED)
 
@@ -247,6 +297,21 @@ class MainWindow(ctk.CTk):
         self.user_input.configure(state=ctk.NORMAL)
         self.user_input.focus_set()
 
+        # Lógica para mostrar botones de respuesta rápida basados en la respuesta del bot
+        # Puedes expandir esta lógica para diferentes respuestas del bot
+        if "¡Hola! Soy IngeChat 360°" in bot_response: # Si es el mensaje de bienvenida
+            self.after(500, lambda: self._add_quick_reply_buttons(["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"]))
+        elif "Ingeniería de Sistemas" in bot_response: # Si el bot habla de Sistemas
+             self.after(500, lambda: self._add_quick_reply_buttons(["Pensum de Sistemas", "Perfil del Egresado de Sistemas", "Salidas Profesionales de Sistemas", "Duración de Sistemas"]))
+        # Puedes añadir más condiciones elif para otras carreras o temas específicos
+        elif "Ingeniería Mecánica" in bot_response:
+             self.after(500, lambda: self._add_quick_reply_buttons(["Pensum de Mecánica", "Perfil del Egresado de Mecánica"]))
+        elif "Ingeniería Eléctrica" in bot_response:
+             self.after(500, lambda: self._add_quick_reply_buttons(["Pensum de Eléctrica", "Perfil del Egresado de Eléctrica"]))
+        elif "Ingeniería de Telecomunicaciones" in bot_response:
+             self.after(500, lambda: self._add_quick_reply_buttons(["Pensum de Telecomunicaciones", "Perfil del Egresado de Telecomunicaciones"]))
+
+
     def _update_theme_colors(self):
         """Actualiza los colores de los widgets que deben cambiar con el tema."""
         current_mode = ctk.get_appearance_mode()
@@ -262,12 +327,11 @@ class MainWindow(ctk.CTk):
             self.typing_indicator_dynamic_color = "#A0A0A0" # Gris claro para indicador
 
         # Aplicar los colores a los widgets
-        # Solo aplicar si los widgets ya han sido creados
         if hasattr(self, 'main_frame'):
             self.main_frame.configure(fg_color=self.dynamic_bg_color)
             self.chat_display_frame.configure(fg_color=self.chat_area_dynamic_bg)
-            self.chat_display_frame.canvas.configure(background=self.chat_area_dynamic_bg) # Actualizar canvas
-            self.chat_display_frame.frame.configure(fg_color=self.chat_area_dynamic_bg) # Actualizar frame interno del scrollable
+            self.chat_display_frame.canvas.configure(background=self.chat_area_dynamic_bg)
+            self.chat_display_frame.frame.configure(fg_color=self.chat_area_dynamic_bg)
             
             self.typing_indicator_label.configure(text_color=self.typing_indicator_dynamic_color)
             for dot in self.typing_dots:
@@ -275,8 +339,8 @@ class MainWindow(ctk.CTk):
 
             self.input_frame.configure(fg_color=self.chat_area_dynamic_bg)
             self.user_input.configure(fg_color=self.chat_area_dynamic_bg, text_color=self.dynamic_text_color)
+            self.quick_reply_frame.configure(fg_color=self.chat_area_dynamic_bg) # Actualizar fondo del marco de botones
 
-            # Recorrer las burbujas existentes y actualizar sus colores
             for widget in self.chat_display_frame.frame.winfo_children():
                 if isinstance(widget, ChatBubble):
                     widget.update_theme_colors(self.chat_area_dynamic_bg, current_mode)
@@ -284,21 +348,22 @@ class MainWindow(ctk.CTk):
 
     def _change_appearance_mode_event(self):
         """Cambia el modo de apariencia (claro/oscuro) de la aplicación."""
-        if self.appearance_mode_switch.get() == 1: # Si el switch está encendido (modo oscuro)
+        if self.appearance_mode_switch.get() == 1:
             ctk.set_appearance_mode("dark")
             self.appearance_mode_switch.configure(text="Modo Claro")
-        else: # Si el switch está apagado (modo claro)
+        else:
             ctk.set_appearance_mode("light")
             self.appearance_mode_switch.configure(text="Modo Oscuro")
         
-        self._update_theme_colors() # Llamar para actualizar los colores de los widgets
+        self._update_theme_colors()
 
     def _restart_chat(self):
         for widget in self.chat_display_frame.frame.winfo_children():
-            if widget != self.typing_indicator_frame:
+            if widget != self.typing_indicator_frame and widget != self.quick_reply_frame: # No destruir el marco de botones
                 widget.destroy()
         self.chatbot.start_new_chat_session()
         self._hide_typing_indicator()
+        self._clear_quick_reply_buttons() # Limpiar botones al reiniciar
         self._initial_message()
         print("Chat reiniciado.")
 

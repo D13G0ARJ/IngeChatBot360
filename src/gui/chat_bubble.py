@@ -11,11 +11,11 @@ class ChatBubble(ctk.CTkFrame):
         self.is_user = is_user
         self.chat_area_bg = chat_area_bg # Guardar para futuras actualizaciones de tema
 
-        # Colores de la burbuja (ahora se definirán dinámicamente)
-        self.bubble_light_user_color = "#DCF8C6" # Verde claro para usuario (modo claro)
-        self.bubble_dark_user_color = "#4CAF50"  # Verde más oscuro para usuario (modo oscuro)
-        self.bubble_light_bot_color = "#E0E0E0"  # Gris claro para bot (modo claro)
-        self.bubble_dark_bot_color = "#555555"   # Gris oscuro para bot (modo oscuro)
+        # Colores de la burbuja y texto para modo CLARO y OSCURO
+        self.bubble_light_user_color = "#DCF8C6"  # Verde claro para usuario (modo claro)
+        self.bubble_dark_user_color = "#004D40"   # Verde oscuro para usuario (modo oscuro, un tono más profundo)
+        self.bubble_light_bot_color = "#E0E0E0"   # Gris claro para bot (modo claro)
+        self.bubble_dark_bot_color = "#424242"    # Gris oscuro para bot (modo oscuro, un tono más oscuro)
         
         self.text_light_color = "black"
         self.text_dark_color = "white"
@@ -24,18 +24,15 @@ class ChatBubble(ctk.CTkFrame):
         current_mode = ctk.get_appearance_mode()
         self._set_bubble_colors(current_mode)
 
-
         self.bubble_frame = ctk.CTkFrame(self, fg_color=self.current_bubble_color, corner_radius=12)
         
-        wrapped_text = "\n".join(textwrap.wrap(text, width=60))
-
         self.message_label = ctk.CTkLabel(
             self.bubble_frame,
-            text=wrapped_text,
+            text=text,
             fg_color=self.current_bubble_color,
             text_color=self.current_text_color,
             font=ctk.CTkFont("Arial", 11),
-            wraplength=400,
+            wraplength=700,
             justify=ctk.LEFT if not is_user else ctk.RIGHT
         )
         self.message_label.pack(side=ctk.LEFT, padx=10, pady=8, anchor=ctk.W if not is_user else ctk.E)
@@ -53,22 +50,27 @@ class ChatBubble(ctk.CTkFrame):
         else:
             self.avatar_label = None
 
-        self.initial_slide_padding = 150
-        self.final_slide_padding = 15
+        # Definir padding inicial y final para la animación
+        # AJUSTADO: initial_slide_padding para que se deslice desde más lejos, pero con más pasos
+        self.initial_slide_padding = 180 # Distancia desde donde "entra" la burbuja (antes 150)
+        self.final_slide_padding = 15 # Padding final deseado en el lado de la animación
 
         if is_user:
-            self.bubble_frame.pack(side=ctk.RIGHT, fill=ctk.BOTH, expand=False, padx=(5, self.final_slide_padding), pady=2)
+            self.bubble_frame.pack(side=ctk.RIGHT, fill=ctk.BOTH, expand=True, padx=(5, self.final_slide_padding), pady=2)
             if self.avatar_label:
                 self.avatar_label.pack(side=ctk.RIGHT, padx=(0, 5))
             self.pack(fill=ctk.X, padx=(self.initial_slide_padding, 10), pady=2, anchor=ctk.E)
         else:
-            self.bubble_frame.pack(side=ctk.LEFT, fill=ctk.BOTH, expand=False, padx=(self.final_slide_padding, 5), pady=2)
+            self.bubble_frame.pack(side=ctk.LEFT, fill=ctk.BOTH, expand=True, padx=(self.final_slide_padding, 5), pady=2)
             if self.avatar_label:
                 self.avatar_label.pack(side=ctk.LEFT, padx=(5, 0))
             self.pack(fill=ctk.X, padx=(10, self.initial_slide_padding), pady=2, anchor=ctk.W)
 
-        self.animation_step = 5
-        self.animation_delay = 20
+        # Atributos para la animación
+        # AJUSTADO: animation_step para movimientos más pequeños y suaves
+        self.animation_step = 3 # Cuántos píxeles se mueve en cada paso (antes 5)
+        # AJUSTADO: animation_delay para que la animación sea más lenta y suave
+        self.animation_delay = 30 # Retardo en milisegundos entre pasos (antes 20)
         self.animation_id = None
 
     def _set_bubble_colors(self, mode):
@@ -83,12 +85,12 @@ class ChatBubble(ctk.CTkFrame):
     def update_theme_colors(self, new_chat_area_bg, current_mode):
         """Actualiza los colores de la burbuja cuando cambia el tema."""
         self.chat_area_bg = new_chat_area_bg
-        self.configure(fg_color=self.chat_area_bg) # Actualiza el fondo del CTkFrame principal de la burbuja
+        self.configure(fg_color=self.chat_area_bg)
 
         if self.avatar_label:
             self.avatar_label.configure(fg_color=self.chat_area_bg)
 
-        self._set_bubble_colors(current_mode) # Recalcular colores de burbuja y texto
+        self._set_bubble_colors(current_mode)
         self.bubble_frame.configure(fg_color=self.current_bubble_color)
         self.message_label.configure(fg_color=self.current_bubble_color, text_color=self.current_text_color)
 
