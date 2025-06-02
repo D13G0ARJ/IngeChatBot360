@@ -20,6 +20,12 @@ class ChatbotLogic:
         """
         lower_message = message.lower()
 
+        # 0. Buscar primero en los datos de entrenamiento
+        training_answer = self.data_manager.get_training_answer(lower_message)
+        if training_answer:
+            logger.info("Respuesta obtenida de training_data.json.")
+            return training_answer
+
         # 1. Intentar responder con datos locales (FAQs, información de carreras)
         
         # Búsqueda por FAQs directas

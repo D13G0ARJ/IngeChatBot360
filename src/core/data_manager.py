@@ -7,11 +7,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class DataManager:
-    def __init__(self, data_path='data'):
+    def __init__(self, data_path: str = 'data'):
         self.data_path = data_path
         self.carreras_data = {}
         self.faqs_data = {}
         self.unefa_info = {}
+        self.training_data = []
         self._load_all_data()
 
     def _load_all_data(self):
@@ -56,13 +57,25 @@ class DataManager:
         else:
             logger.warning(f"Archivo de información de UNEFA no encontrado: {unefa_info_path}")
 
+        # Cargar training_data.json
+        training_data_path = os.path.join(self.data_path, 'training_data.json')
+        if os.path.exists(training_data_path):
+            try:
+                with open(training_data_path, 'r', encoding='utf-8') as f:
+                    self.training_data = json.load(f)
+                logger.info("Cargados datos de entrenamiento (training_data.json).")
+            except Exception as e:
+                logger.error(f"Error al cargar {training_data_path}: {e}")
+        else:
+            logger.warning(f"Archivo de training_data no encontrado: {training_data_path}")
+
     def get_career_info(self, career_name: str) -> dict:
         """Obtiene la información de una carrera específica."""
         return self.carreras_data.get(career_name.lower(), {})
 
     def get_faq_answer(self, question: str) -> str | None:
         """Busca una respuesta a una pregunta frecuente."""
-        # Simple búsqueda por coincidencias, se podría mejorar con algoritmos de similitud.
+        # Búsqueda simple por coincidencia, se puede mejorar con algoritmos de similitud.
         for qa in self.faqs_data.get("preguntas_frecuentes", []):
             if question.lower() in qa["pregunta"].lower():
                 return qa["respuesta"]
@@ -71,3 +84,12 @@ class DataManager:
     def get_unefa_general_info(self, topic: str) -> str | None:
         """Obtiene información general de la UNEFA por tema."""
         return self.unefa_info.get(topic.lower(), None)
+
+    def get_training_answer(self, question: str) -> str | None:
+        """Busca una respuesta en los datos de entrenamiento por coincidencia exacta o inclusión."""
+        question_lower = question.strip().lower()
+        for item in self.training_data:
+            prompt = item.get("prompt", "").strip().lower()
+            if question_lower == prompt or question_lower in prompt or prompt in question_lower:
+                return item.get("completion")
+        return None
