@@ -1,3 +1,4 @@
 google-generativeai
 python-dotenv
 Pillow # Para manejar imágenes en Tkinter si las usas en la UI
+customtkinter    
