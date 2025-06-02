@@ -1,14 +1,14 @@
 # src/gui/scrollable_frame.py
 import tkinter as tk
-from tkinter import ttk
+import customtkinter as ctk # Importar CustomTkinter
 
-class ScrollableFrame(ttk.Frame):
-    def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+class ScrollableFrame(ctk.CTkFrame): # Cambiado de ttk.Frame a ctk.CTkFrame
+    def __init__(self, parent, fg_color="#F8F8F8", *args, **kwargs): # Añadir fg_color para el fondo
+        super().__init__(parent, fg_color=fg_color, *args, **kwargs)
 
-        self.canvas = tk.Canvas(self, borderwidth=0, background="#F8F8F8") # Fondo del área de chat
-        self.frame = ttk.Frame(self.canvas)
-        self.vsb = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.canvas = tk.Canvas(self, borderwidth=0, background=fg_color, highlightthickness=0) # Fondo del área de chat, highlightthickness=0 para quitar borde
+        self.frame = ctk.CTkFrame(self.canvas, fg_color=fg_color) # Cambiado de ttk.Frame a ctk.CTkFrame
+        self.vsb = ctk.CTkScrollbar(self, orientation="vertical", command=self.canvas.yview) # Cambiado de ttk.Scrollbar a ctk.CTkScrollbar
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
         self.vsb.pack(side="right", fill="y")

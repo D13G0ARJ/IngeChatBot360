@@ -1,28 +1,43 @@
 # src/gui/main_window.py
-import tkinter as tk
-from tkinter import ttk, PhotoImage
+import customtkinter as ctk
+import tkinter as tk # Mantener para PhotoImage y Canvas (si ScrollableFrame lo usa)
 from PIL import Image, ImageTk
 import os
 from src.core.chatbot_logic import ChatbotLogic
+# NOTA IMPORTANTE: chat_bubble.py y scrollable_frame.py TAMBIÉN DEBEN SER ACTUALIZADOS
+# para usar CustomTkinter internamente para una apariencia consistente.
 from src.gui.chat_bubble import ChatBubble
 from src.gui.scrollable_frame import ScrollableFrame
 
-class MainWindow(tk.Tk):
+class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("IngeChat 360° - UNEFA")
-        self.geometry("800x700") # Tamaño inicial de la ventana
-        self.minsize(600, 600) # Tamaño mínimo
-        self.configure(bg="#F0F2F5") # Color de fondo general
+        self.geometry("800x700")
+        self.minsize(600, 600)
+
+        # Configurar modo de apariencia (claro/oscuro) y tema por defecto de CustomTkinter
+        ctk.set_appearance_mode("light") # Puede ser "System", "Dark", "Light"
+        ctk.set_default_color_theme("blue") # "blue", "dark-blue", "green" (ajusta si quieres un azul por defecto de ctk)
+
+        # Definir colores específicos de UNEFA (Azul Rey y Blanco)
+        self.primary_blue = "#003366"  # Azul Rey oscuro principal (para cabecera, botones hover)
+        self.secondary_blue = "#4169E1" # Azul Rey estándar (para botones, bordes)
+        self.accent_blue_light = "#6495ED" # Azul más claro para acentos/botones activos
+        self.white_color = "#FFFFFF"   # Blanco (para fondos de chat, texto en oscuro)
+        self.light_gray_bg = "#F0F0F0" # Gris claro (para fondo general de la ventana)
+        self.chat_bg_color = "#FFFFFF" # Color de fondo del área de chat
+        self.text_color_dark = "#333333" # Color de texto oscuro
+        self.text_color_light = "#FFFFFF" # Color de texto claro (para fondos azules)
+        self.border_color_subtle = "#D0D0D0" # Color de borde sutil
 
         self.chatbot = ChatbotLogic()
         self.user_avatar_path = os.path.join("assets", "images", "user_avatar.png")
         self.bot_avatar_path = os.path.join("assets", "images", "bot_avatar.png")
         self.unefa_logo_path = os.path.join("assets", "images", "logo_unefa.png")
-        self.send_icon_path = os.path.join("assets", "images", "send_icon.png") # Necesitarás un icono de enviar
+        self.send_icon_path = os.path.join("assets", "images", "send_icon.png")
 
         self._load_assets()
-        self._apply_styles() # Aplicar estilos antes de crear widgets para que estén disponibles
         self._create_widgets()
         self._initial_message()
 
@@ -30,129 +45,98 @@ class MainWindow(tk.Tk):
         """Carga y procesa imágenes para la interfaz."""
         try:
             # Logo UNEFA
-            self.unefa_logo_img = Image.open(self.unefa_logo_path)
-            self.unefa_logo_img = self.unefa_logo_img.resize((150, 40), Image.LANCZOS)
-            self.unefa_logo_tk = ImageTk.PhotoImage(self.unefa_logo_img)
+            unefa_logo_pil = Image.open(self.unefa_logo_path)
+            
+            # Obtener el tamaño original de la imagen
+            original_width, original_height = unefa_logo_pil.size
+            
+            # Definir una altura máxima deseada para el logo
+            max_logo_height = 50 # Puedes ajustar esta altura según sea necesario
+            
+            # Calcular el nuevo ancho manteniendo la relación de aspecto
+            new_width = int(original_width * (max_logo_height / original_height))
+            
+            # Crear CTkImage con el nuevo tamaño calculado
+            self.unefa_logo_ctk = ctk.CTkImage(light_image=unefa_logo_pil,
+                                               dark_image=unefa_logo_pil, # Usar la misma imagen para modo oscuro/claro
+                                               size=(new_width, max_logo_height)) # TAMAÑO AJUSTADO AQUÍ DINÁMICAMENTE
 
-            # Icono de enviar (si existe)
+            # Icono de enviar
             if os.path.exists(self.send_icon_path):
-                self.send_icon_img = Image.open(self.send_icon_path)
-                self.send_icon_img = self.send_icon_img.resize((24, 24), Image.LANCZOS)
-                self.send_icon_tk = ImageTk.PhotoImage(self.send_icon_img)
+                send_icon_pil = Image.open(self.send_icon_path)
+                self.send_icon_ctk = ctk.CTkImage(light_image=send_icon_pil,
+                                                  dark_image=send_icon_pil,
+                                                  size=(24, 24))
             else:
-                self.send_icon_tk = None # No hay icono
+                self.send_icon_ctk = None
                 print(f"Advertencia: No se encontró el icono de enviar en {self.send_icon_path}")
 
         except Exception as e:
             print(f"Error al cargar assets: {e}")
-            self.unefa_logo_tk = None
-            self.send_icon_tk = None
+            self.unefa_logo_ctk = None
+            self.send_icon_ctk = None
 
     def _create_widgets(self):
+        """Crea y posiciona todos los widgets de la interfaz."""
         # Contenedor principal para la UI
-        main_frame = ttk.Frame(self, padding="15", style="Main.TFrame")
-        main_frame.pack(fill=tk.BOTH, expand=True)
+        main_frame = ctk.CTkFrame(self, fg_color=self.light_gray_bg) # Fondo gris claro
+        main_frame.pack(fill=ctk.BOTH, expand=True, padx=15, pady=15) # Espaciado alrededor
 
         # --- Header ---
-        header_frame = ttk.Frame(main_frame, style="Header.TFrame")
-        header_frame.pack(fill=tk.X, pady=(0, 10))
+        header_frame = ctk.CTkFrame(main_frame, fg_color=self.primary_blue, corner_radius=10) # Fondo azul rey oscuro, esquinas redondeadas
+        header_frame.pack(fill=ctk.X, pady=(15, 15)) # Aumentado el pady del header_frame para más espacio vertical
 
-        if self.unefa_logo_tk:
-            # CORRECCIÓN AQUÍ: Usar el color literal definido en _apply_styles para Header.TFrame
-            logo_label = tk.Label(header_frame, image=self.unefa_logo_tk, bg="#FFFFFF") 
-            logo_label.pack(side=tk.LEFT, padx=(0, 10))
-        
-        title_label = ttk.Label(header_frame, text="IngeChat 360°", font=("Arial", 20, "bold"), style="Title.TLabel")
-        title_label.pack(side=tk.LEFT, expand=True, fill=tk.X)
-        
+        if self.unefa_logo_ctk: # Usar el objeto CTkImage
+            logo_label = ctk.CTkLabel(header_frame, image=self.unefa_logo_ctk, text="") # Etiqueta para el logo
+            logo_label.pack(side=ctk.LEFT, padx=(15, 10), pady=0) # Ajustado padx y pady para el logo
+
+        title_label = ctk.CTkLabel(header_frame, text="IngeChat 360°",
+                                   font=ctk.CTkFont("Arial", 20, "bold"),
+                                   text_color=self.text_color_light) # Texto blanco
+        title_label.pack(side=ctk.LEFT, expand=True, fill=ctk.X, pady=0) # Ajustado pady para el título
+
         # Botón para reiniciar chat
-        restart_btn = ttk.Button(header_frame, text="Reiniciar Chat", command=self._restart_chat, style="Accent.TButton")
-        restart_btn.pack(side=tk.RIGHT)
+        restart_btn = ctk.CTkButton(header_frame, text="Reiniciar Chat", command=self._restart_chat,
+                                    fg_color=self.accent_blue_light, # Azul claro
+                                    hover_color=self.secondary_blue, # Azul estándar al pasar el mouse
+                                    text_color=self.white_color,
+                                    corner_radius=8)
+        restart_btn.pack(side=ctk.RIGHT, padx=15, pady=0) # Ajustado padx y pady para el botón
 
         # --- Área de Mensajes (ScrollableFrame) ---
-        self.chat_display_frame = ScrollableFrame(main_frame, style="ChatDisplay.TFrame")
-        self.chat_display_frame.pack(fill=tk.BOTH, expand=True, pady=10)
+        # NOTE: Asegúrate de que ScrollableFrame usa ctk.CTkFrame internamente
+        self.chat_display_frame = ScrollableFrame(main_frame, fg_color=self.chat_bg_color) # Fondo blanco para el chat
+        self.chat_display_frame.pack(fill=ctk.BOTH, expand=True, pady=10, padx=5)
 
         # --- Área de Entrada de Usuario ---
-        input_frame = ttk.Frame(main_frame, style="Input.TFrame")
-        input_frame.pack(fill=tk.X, pady=(10, 0))
+        input_frame = ctk.CTkFrame(main_frame, fg_color=self.white_color, corner_radius=10, border_width=1, border_color=self.border_color_subtle)
+        input_frame.pack(fill=ctk.X, pady=(10, 0))
 
-        self.user_input = ttk.Entry(
+        self.user_input = ctk.CTkEntry(
             input_frame,
-            font=("Arial", 11),
-            style="Input.TEntry"
+            font=ctk.CTkFont("Arial", 11),
+            placeholder_text="Escribe tu mensaje...", # Texto de ayuda
+            fg_color=self.white_color,
+            text_color=self.text_color_dark,
+            border_color=self.secondary_blue, # Borde azul
+            corner_radius=8,
+            border_width=1
         )
-        self.user_input.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
-        self.user_input.bind("<Return>", self._send_message_event) # Enviar con Enter
+        self.user_input.pack(side=ctk.LEFT, fill=ctk.X, expand=True, padx=(10, 10), pady=10)
+        self.user_input.bind("<Return>", self._send_message_event)
 
-        send_button = ttk.Button(
+        send_button = ctk.CTkButton(
             input_frame,
-            text="Enviar" if not self.send_icon_tk else "",
-            image=self.send_icon_tk, # Mostrar icono si está cargado
+            text="Enviar" if not self.send_icon_ctk else "", # Usar send_icon_ctk
+            image=self.send_icon_ctk, # Usar send_icon_ctk
             command=self._send_message,
-            compound=tk.LEFT if self.send_icon_tk else tk.NONE, # Icono a la izquierda del texto
-            style="Send.TButton"
+            compound=ctk.LEFT if self.send_icon_ctk else ctk.NONE,
+            fg_color=self.secondary_blue, # Azul estándar
+            hover_color=self.primary_blue, # Azul oscuro al pasar el mouse
+            text_color=self.white_color,
+            corner_radius=8
         )
-        send_button.pack(side=tk.RIGHT)
-
-        # Mover _apply_styles() al final del __init__ o antes de _create_widgets()
-        # para asegurar que los estilos estén definidos cuando se crean los widgets.
-        # Ya lo moví al __init__ para ti.
-
-    def _apply_styles(self):
-        """Define y aplica estilos personalizados con ttk.Style."""
-        style = ttk.Style(self)
-        
-        # Colores base
-        primary_color = "#4CAF50"  # Verde UNEFA (ejemplo)
-        secondary_color = "#388E3C" # Verde más oscuro
-        background_light = "#F8F8F8"
-        background_dark = "#E0E0E0"
-        text_color_dark = "#333333"
-        text_color_light = "#FFFFFF"
-
-        # General
-        style.configure("TFrame", background=self.cget('bg'))
-        style.configure("TLabel", background=self.cget('bg'), foreground=text_color_dark)
-        style.configure("TButton", 
-                        font=("Arial", 10, "bold"), 
-                        background=primary_color, 
-                        foreground=text_color_light,
-                        padding=8)
-        style.map("TButton", 
-                  background=[('active', secondary_color)],
-                  foreground=[('active', text_color_light)])
-        
-        # Estilos específicos para la ventana principal
-        style.configure("Main.TFrame", background="#F0F2F5") # Fondo de la ventana
-        
-        # Header
-        style.configure("Header.TFrame", background="#FFFFFF", relief="solid", borderwidth=1, bordercolor="#E0E0E0")
-        style.configure("Title.TLabel", foreground=primary_color, background="#FFFFFF")
-        style.configure("Accent.TButton", background="#FFC107", foreground="black") # Botón de acento
-        style.map("Accent.TButton", background=[('active', "#FFA000")])
-
-        # Chat Display Frame (ScrollableFrame)
-        style.configure("ChatDisplay.TFrame", background=background_light, relief="flat") # Fondo del área de chat
-        style.configure("ChatDisplay.TScrollbar", background=primary_color, troughcolor=background_dark)
-        
-        # Input Frame
-        style.configure("Input.TFrame", background="#FFFFFF", relief="solid", borderwidth=1, bordercolor="#E0E0E0")
-        style.configure("Input.TEntry", 
-                        fieldbackground="#FFFFFF", 
-                        foreground=text_color_dark, 
-                        bordercolor=primary_color, 
-                        borderwidth=1, 
-                        relief="flat",
-                        padding=(5, 5))
-        style.map("Input.TEntry", bordercolor=[('focus', secondary_color)])
-
-        style.configure("Send.TButton", background=primary_color, foreground=text_color_light, padding=(5,5))
-        style.map("Send.TButton", background=[('active', secondary_color)])
-        
-        # Configurar un tema si se usa archivo .tcl
-        # self.tk.call("source", os.path.join("assets", "styles", "custom_theme.tcl"))
-        # style.theme_use("IngeChatTheme") # Si se ha creado un tema TTK custom
+        send_button.pack(side=ctk.RIGHT, padx=(0, 10), pady=10)
 
     def _initial_message(self):
         """Muestra el mensaje de bienvenida del chatbot."""
@@ -166,20 +150,19 @@ class MainWindow(tk.Tk):
 
     def _add_message(self, message, is_user):
         """Agrega un mensaje al área de visualización del chat."""
-        # Obtener el color de fondo del área de chat (ScrollableFrame)
-        # Este color es el background_light (#F8F8F8) definido en _apply_styles
-        chat_area_bg_color = "#F8F8F8" 
-
+        # NOTE: Asegúrate de que ChatBubble usa ctk.CTkFrame y ctk.CTkLabel internamente
         bubble = ChatBubble(
-            self.chat_display_frame.frame,
+            self.chat_display_frame.frame, # Este es el frame interno de ScrollableFrame
             message,
             is_user,
+            # Pasar la imagen PIL directamente, ChatBubble la convertirá a CTkImage
             avatar_path=self.user_avatar_path if is_user else self.bot_avatar_path,
-            chat_area_bg=chat_area_bg_color # Pasar el color de fondo del área de chat
+            chat_area_bg=self.chat_bg_color # Pasa el color de fondo del área de chat
         )
-        bubble.pack(fill=tk.X, pady=5, padx=5, anchor=tk.NW if not is_user else tk.NE)
-        
+        bubble.pack(fill=ctk.X, pady=5, padx=5, anchor=ctk.NW if not is_user else ctk.NE)
+
         # Asegurarse de que el scroll vaya hasta el final
+        # Esta parte aún depende del tk.Canvas subyacente en ScrollableFrame.
         self.chat_display_frame.canvas.update_idletasks()
         self.chat_display_frame.canvas.yview_moveto(1.0)
 
@@ -194,22 +177,16 @@ class MainWindow(tk.Tk):
         if not user_text:
             return
 
-        self.user_input.delete(0, tk.END)
+        self.user_input.delete(0, ctk.END)
         self._add_message(user_text, is_user=True)
 
-        # Obtener respuesta del chatbot (puede tomar tiempo, ejecutar en hilo si es muy lento)
-        # Para Tkinter, es mejor evitar operaciones bloqueantes en el hilo principal.
-        # Para este caso, la llamada a Gemini es una solicitud de red, lo que podría congelar la UI.
-        # Si la latencia es un problema, se debería usar threading.Thread o asyncio (con ttk.asyncio).
-        
-        # Ejemplo simple (bloqueante):
         bot_response = self.chatbot.process_message(user_text)
         self._add_message(bot_response, is_user=False)
 
     def _restart_chat(self):
         """Reinicia la conversación del chatbot."""
         for widget in self.chat_display_frame.frame.winfo_children():
-            widget.destroy() # Eliminar todos los mensajes previos
+            widget.destroy()
         self.chatbot.start_new_chat_session()
         self._initial_message()
         print("Chat reiniciado.")
