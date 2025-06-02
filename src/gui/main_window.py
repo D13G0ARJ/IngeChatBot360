@@ -17,18 +17,22 @@ class MainWindow(ctk.CTk):
         self.geometry("800x700")
         self.minsize(600, 600)
 
+        # Configurar modo de apariencia inicial (claro)
         ctk.set_appearance_mode("light") 
-        ctk.set_default_color_theme("blue") 
+        ctk.set_default_color_theme("blue") # Tema por defecto de CustomTkinter
 
         self.primary_blue = "#003366"  
         self.secondary_blue = "#4169E1" 
         self.accent_blue_light = "#6495ED" 
         self.white_color = "#FFFFFF"   
-        self.light_gray_bg = "#F0F0F0" 
-        self.chat_bg_color = "#FFFFFF" 
-        self.text_color_dark = "#333333" 
-        self.text_color_light = "#FFFFFF" 
         self.border_color_subtle = "#D0D0D0" 
+
+        # Colores que cambiarán con el tema (se actualizarán en _update_theme_colors)
+        # Inicializados aquí, pero sus valores se establecerán correctamente en _update_theme_colors
+        self.dynamic_bg_color = ""
+        self.dynamic_text_color = ""
+        self.chat_area_dynamic_bg = ""
+        self.typing_indicator_dynamic_color = ""
 
         self.chatbot = ChatbotLogic()
         self.user_avatar_path = os.path.join("assets", "images", "user_avatar.png")
@@ -41,9 +45,12 @@ class MainWindow(ctk.CTk):
         self.typing_animation_id = None
 
         self._load_assets()
+        # CORRECCIÓN CLAVE: Llamar a _update_theme_colors ANTES de _create_widgets
+        self._update_theme_colors() 
         self._create_widgets()
         self._initial_message()
         
+
     def _load_assets(self):
         """Carga y procesa imágenes para la interfaz."""
         try:
@@ -71,10 +78,11 @@ class MainWindow(ctk.CTk):
 
     def _create_widgets(self):
         """Crea y posiciona todos los widgets de la interfaz."""
-        main_frame = ctk.CTkFrame(self, fg_color=self.light_gray_bg)
-        main_frame.pack(fill=ctk.BOTH, expand=True, padx=15, pady=15)
+        # Usar colores dinámicos para fondos que cambian con el tema
+        self.main_frame = ctk.CTkFrame(self, fg_color=self.dynamic_bg_color) 
+        self.main_frame.pack(fill=ctk.BOTH, expand=True, padx=15, pady=15)
 
-        header_frame = ctk.CTkFrame(main_frame, fg_color=self.primary_blue, corner_radius=10)
+        header_frame = ctk.CTkFrame(self.main_frame, fg_color=self.primary_blue, corner_radius=10)
         header_frame.pack(fill=ctk.X, pady=(15, 15))
 
         if self.unefa_logo_ctk:
@@ -83,7 +91,7 @@ class MainWindow(ctk.CTk):
 
         title_label = ctk.CTkLabel(header_frame, text="IngeChat 360°",
                                    font=ctk.CTkFont("Arial", 20, "bold"),
-                                   text_color=self.text_color_light)
+                                   text_color=self.white_color)
         title_label.pack(side=ctk.LEFT, expand=True, fill=ctk.X, pady=0)
 
         restart_btn = ctk.CTkButton(header_frame, text="Reiniciar Chat", command=self._restart_chat,
@@ -91,33 +99,48 @@ class MainWindow(ctk.CTk):
                                     hover_color=self.secondary_blue, 
                                     text_color=self.white_color,
                                     corner_radius=8)
-        restart_btn.pack(side=ctk.RIGHT, padx=15, pady=0)
+        restart_btn.pack(side=ctk.RIGHT, padx=(0, 15), pady=0)
 
-        self.chat_display_frame = ScrollableFrame(main_frame, fg_color=self.chat_bg_color)
+        # Selector de Tema (Modo Claro/Oscuro)
+        self.appearance_mode_switch = ctk.CTkSwitch(
+            header_frame, 
+            text="Modo Oscuro", 
+            command=self._change_appearance_mode_event,
+            button_color=self.secondary_blue,
+            button_hover_color=self.primary_blue,
+            progress_color=self.accent_blue_light,
+            text_color=self.white_color,
+            font=ctk.CTkFont("Arial", 10, "bold")
+        )
+        self.appearance_mode_switch.pack(side=ctk.RIGHT, padx=(0, 15), pady=0)
+
+        # Usar color dinámico para el fondo del área de chat
+        self.chat_display_frame = ScrollableFrame(self.main_frame, fg_color=self.chat_area_dynamic_bg)
         self.chat_display_frame.pack(fill=ctk.BOTH, expand=True, pady=10, padx=5)
 
         self.typing_indicator_frame = ctk.CTkFrame(self.chat_display_frame.frame, fg_color="transparent")
         self.typing_indicator_label = ctk.CTkLabel(self.typing_indicator_frame, text="IngeChat 360° está escribiendo", 
                                                    font=ctk.CTkFont("Arial", 10, weight="normal", slant="italic"), 
-                                                   text_color="gray")
+                                                   text_color=self.typing_indicator_dynamic_color) # Color dinámico
         self.typing_indicator_label.pack(side=ctk.LEFT, padx=(5,2), pady=5)
         
         for i in range(3):
-            dot = ctk.CTkLabel(self.typing_indicator_frame, text="•", font=ctk.CTkFont("Arial", 14, "bold"), text_color="gray")
+            dot = ctk.CTkLabel(self.typing_indicator_frame, text="•", font=ctk.CTkFont("Arial", 14, "bold"), text_color=self.typing_indicator_dynamic_color) # Color dinámico
             dot.pack(side=ctk.LEFT, pady=5)
             self.typing_dots.append(dot)
         
         self.typing_indicator_frame.pack_forget()
 
-        input_frame = ctk.CTkFrame(main_frame, fg_color=self.white_color, corner_radius=10, border_width=1, border_color=self.border_color_subtle)
-        input_frame.pack(fill=ctk.X, pady=(10, 0))
+        # Usar colores dinámicos para el campo de entrada
+        self.input_frame = ctk.CTkFrame(self.main_frame, fg_color=self.chat_area_dynamic_bg, corner_radius=10, border_width=1, border_color=self.border_color_subtle)
+        self.input_frame.pack(fill=ctk.X, pady=(10, 0))
 
         self.user_input = ctk.CTkEntry(
-            input_frame,
+            self.input_frame,
             font=ctk.CTkFont("Arial", 11),
             placeholder_text="Escribe tu mensaje...",
-            fg_color=self.white_color,
-            text_color=self.text_color_dark,
+            fg_color=self.chat_area_dynamic_bg, # Fondo del campo de entrada dinámico
+            text_color=self.dynamic_text_color, # Color del texto dinámico
             border_color=self.secondary_blue,
             corner_radius=8,
             border_width=1
@@ -126,7 +149,7 @@ class MainWindow(ctk.CTk):
         self.user_input.bind("<Return>", self._send_message_event)
 
         send_button = ctk.CTkButton(
-            input_frame,
+            self.input_frame,
             text="Enviar" if not self.send_icon_ctk else "",
             image=self.send_icon_ctk,
             command=self._send_message,
@@ -155,14 +178,13 @@ class MainWindow(ctk.CTk):
             message,
             is_user,
             avatar_path=self.user_avatar_path if is_user else self.bot_avatar_path,
-            chat_area_bg=self.chat_bg_color
+            chat_area_bg=self.chat_area_dynamic_bg # Pasar el color dinámico del área de chat
         )
         bubble.pack(fill=ctk.X, pady=5, padx=5, anchor=ctk.NW if not is_user else ctk.NE)
         self.chat_display_frame.canvas.update_idletasks()
         self.chat_display_frame.canvas.yview_moveto(1.0)
         
-        # Iniciar la animación de la burbuja después de añadirla
-        bubble.start_animation() # ESTA ES LA LÍNEA CLAVE
+        bubble.start_animation()
 
     def _show_typing_indicator(self):
         if not self.typing_indicator_visible:
@@ -181,7 +203,7 @@ class MainWindow(ctk.CTk):
                 self.after_cancel(self.typing_animation_id)
                 self.typing_animation_id = None
             for dot in self.typing_dots:
-                dot.configure(text_color="gray")
+                dot.configure(text_color=self.typing_indicator_dynamic_color)
 
     def _animate_typing_dots(self, dot_index):
         if not self.typing_indicator_visible:
@@ -191,7 +213,7 @@ class MainWindow(ctk.CTk):
             if i == dot_index:
                 dot.configure(text_color=self.secondary_blue)
             else:
-                dot.configure(text_color="gray")
+                dot.configure(text_color=self.typing_indicator_dynamic_color)
         
         next_dot_index = (dot_index + 1) % len(self.typing_dots)
         self.typing_animation_id = self.after(300, self._animate_typing_dots, next_dot_index)
@@ -224,6 +246,52 @@ class MainWindow(ctk.CTk):
         
         self.user_input.configure(state=ctk.NORMAL)
         self.user_input.focus_set()
+
+    def _update_theme_colors(self):
+        """Actualiza los colores de los widgets que deben cambiar con el tema."""
+        current_mode = ctk.get_appearance_mode()
+        if current_mode == "Light":
+            self.dynamic_bg_color = "#F0F0F0" # Gris claro para fondo general
+            self.dynamic_text_color = "#333333" # Texto oscuro
+            self.chat_area_dynamic_bg = "#FFFFFF" # Fondo de chat blanco
+            self.typing_indicator_dynamic_color = "gray" # Gris para indicador
+        else: # Dark mode
+            self.dynamic_bg_color = "#2B2B2B" # Gris oscuro para fondo general
+            self.dynamic_text_color = "#FFFFFF" # Texto blanco
+            self.chat_area_dynamic_bg = "#343638" # Fondo de chat oscuro
+            self.typing_indicator_dynamic_color = "#A0A0A0" # Gris claro para indicador
+
+        # Aplicar los colores a los widgets
+        # Solo aplicar si los widgets ya han sido creados
+        if hasattr(self, 'main_frame'):
+            self.main_frame.configure(fg_color=self.dynamic_bg_color)
+            self.chat_display_frame.configure(fg_color=self.chat_area_dynamic_bg)
+            self.chat_display_frame.canvas.configure(background=self.chat_area_dynamic_bg) # Actualizar canvas
+            self.chat_display_frame.frame.configure(fg_color=self.chat_area_dynamic_bg) # Actualizar frame interno del scrollable
+            
+            self.typing_indicator_label.configure(text_color=self.typing_indicator_dynamic_color)
+            for dot in self.typing_dots:
+                dot.configure(text_color=self.typing_indicator_dynamic_color)
+
+            self.input_frame.configure(fg_color=self.chat_area_dynamic_bg)
+            self.user_input.configure(fg_color=self.chat_area_dynamic_bg, text_color=self.dynamic_text_color)
+
+            # Recorrer las burbujas existentes y actualizar sus colores
+            for widget in self.chat_display_frame.frame.winfo_children():
+                if isinstance(widget, ChatBubble):
+                    widget.update_theme_colors(self.chat_area_dynamic_bg, current_mode)
+
+
+    def _change_appearance_mode_event(self):
+        """Cambia el modo de apariencia (claro/oscuro) de la aplicación."""
+        if self.appearance_mode_switch.get() == 1: # Si el switch está encendido (modo oscuro)
+            ctk.set_appearance_mode("dark")
+            self.appearance_mode_switch.configure(text="Modo Claro")
+        else: # Si el switch está apagado (modo claro)
+            ctk.set_appearance_mode("light")
+            self.appearance_mode_switch.configure(text="Modo Oscuro")
+        
+        self._update_theme_colors() # Llamar para actualizar los colores de los widgets
 
     def _restart_chat(self):
         for widget in self.chat_display_frame.frame.winfo_children():
