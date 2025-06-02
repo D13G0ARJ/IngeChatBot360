@@ -1,5 +1,6 @@
 # Ignorar la carpeta del entorno virtual de Python
 venv/
+bot/
 
 # Ignorar el archivo de variables de entorno
 .env
