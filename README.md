@@ -212,6 +212,10 @@ El sistema incluye logging detallado para monitoreo:
 
 Este proyecto es desarrollado para la UNEFA Núcleo Miranda, Sede Los Teques, como parte de las iniciativas de modernización tecnológica educativa.
 
+## 👨‍💻 Autor
+
+  - **Diego Rodriguez** - [D13G0ARJ](https://github.com/D13G0ARJ)
+
 ## 👥 Créditos
 
 Desarrollado para la **Universidad Nacional Experimental Politécnica de la Fuerza Armada Bolivariana (UNEFA)**, Núcleo Miranda, Sede Los Teques, como parte del proyecto de modernización de la gestión educativa y orientación estudiantil.
