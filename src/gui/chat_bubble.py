@@ -40,9 +40,11 @@ class ChatBubble(ctk.CTkFrame):
         if avatar_path:
             try:
                 avatar_pil = Image.open(avatar_path)
+                # AUMENTADO EL TAMAÑO DE LOS AVATARES AQUÍ
                 self.avatar_ctk_image = ctk.CTkImage(light_image=avatar_pil,
                                                      dark_image=avatar_pil,
-                                                     size=(30, 30))
+                                                     size=(60, 60)) # Tamaño aumentado de 30x30 a 40x40
+                
                 self.avatar_label = ctk.CTkLabel(self, image=self.avatar_ctk_image, text="", fg_color=self.chat_area_bg) 
             except Exception as e:
                 print(f"Error loading avatar {avatar_path}: {e}")
@@ -50,10 +52,8 @@ class ChatBubble(ctk.CTkFrame):
         else:
             self.avatar_label = None
 
-        # Definir padding inicial y final para la animación
-        # AJUSTADO: initial_slide_padding para que se deslice desde más lejos, pero con más pasos
-        self.initial_slide_padding = 180 # Distancia desde donde "entra" la burbuja (antes 150)
-        self.final_slide_padding = 15 # Padding final deseado en el lado de la animación
+        self.initial_slide_padding = 180
+        self.final_slide_padding = 15
 
         if is_user:
             self.bubble_frame.pack(side=ctk.RIGHT, fill=ctk.BOTH, expand=True, padx=(5, self.final_slide_padding), pady=2)
@@ -66,11 +66,8 @@ class ChatBubble(ctk.CTkFrame):
                 self.avatar_label.pack(side=ctk.LEFT, padx=(5, 0))
             self.pack(fill=ctk.X, padx=(10, self.initial_slide_padding), pady=2, anchor=ctk.W)
 
-        # Atributos para la animación
-        # AJUSTADO: animation_step para movimientos más pequeños y suaves
-        self.animation_step = 3 # Cuántos píxeles se mueve en cada paso (antes 5)
-        # AJUSTADO: animation_delay para que la animación sea más lenta y suave
-        self.animation_delay = 30 # Retardo en milisegundos entre pasos (antes 20)
+        self.animation_step = 3
+        self.animation_delay = 30
         self.animation_id = None
 
     def _set_bubble_colors(self, mode):

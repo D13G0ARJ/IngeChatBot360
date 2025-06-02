@@ -14,7 +14,7 @@ class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("IngeChat 360° - UNEFA")
-        self.geometry("800x700")
+        self.geometry("900x800")
         self.minsize(600, 600) # Permite al usuario redimensionar la ventana, con un tamaño mínimo
 
         # Configurar modo de apariencia inicial (claro)
