@@ -1,0 +1,40 @@
+{
+  "nombre_institucion": "Universidad Nacional Experimental Politécnica de la Fuerza Armada Bolivariana (UNEFA)",
+  "nucleo": "Miranda",
+  "sede": "Los Teques",
+  "mision": "La UNEFA, a través de IngeChat 360°, busca modernizar y optimizar los procesos de divulgación de información académica y profesional, ofreciendo acceso inmediato, interactivo y personalizado a información clave sobre las carreras de Ingeniería en Sistemas, Mecánica, Telecomunicaciones y Eléctrica. El proyecto busca superar las limitaciones de los métodos tradicionales y fortalecer la transparencia, vinculación y eficiencia en la gestión educativa. [cite: 24, 26, 42]",
+  "vision": "IngeChat 360° posiciona a la UNEFA como una institución a la vanguardia en el uso estratégico de soluciones tecnológicas accesibles para la gestión educativa, modernizando la comunicación y orientación estudiantil. [cite: 35, 18]",
+  "ubicacion": "Los Teques, Miranda, Venezuela.",
+  "contacto": {
+    "direccion_fisica": "Núcleo Miranda, Sede Los Teques (dirección exacta no especificada en el documento)"
+  },
+  "carreras_ingenieria_ofrecidas": [
+    "Ingeniería de Sistemas",
+    "Ingeniería Mecánica",
+    "Ingeniería en Telecomunicaciones",
+    "Ingeniería Eléctrica"
+  ],
+  "acerca_del_chatbot": {
+    "nombre_chatbot": "IngeChat 360°",
+    "proposito": "Optimizar la divulgación de información integral sobre las carreras de Ingeniería y mejorar la orientación académica y profesional de los estudiantes de la UNEFA Núcleo Miranda, Sede Los Teques. [cite: 19, 44]",
+    "funcionalidades_iniciales": [
+      "Descripción general de la carrera (perfil del egresado, áreas de estudio y competencias). [cite: 45]",
+      "Plan de estudios (materias, pensum y duración). [cite: 46]",
+      "Áreas de especialización. [cite: 47]",
+      "Salidas profesionales y campo laboral. [cite: 48]",
+      "Requisitos y procesos de inscripción (guía básica). [cite: 49]",
+      "Actividades extracurriculares (grupos de investigación, proyectos estudiantiles). [cite: 50]"
+    ],
+    "limitaciones_iniciales": [
+      "Centrado en divulgación y orientación, sin funcionalidades transaccionales (ej. inscripciones directas, pagos). [cite: 54]",
+      "Limitado a las cuatro carreras de ingeniería mencionadas. [cite: 55]",
+      "Interacción basada en preguntas frecuentes y estructuras de diálogo predefinidas (buscando naturalidad). [cite: 56]"
+    ],
+    "futuras_recomendaciones": [
+      "Plan de mantenimiento y actualización periódica del contenido. [cite: 63, 64]",
+      "Explorar un sistema dinámico para la gestión de contenido (similar a QR dinámicos). [cite: 65]",
+      "Expandir funcionalidades: integración con FAQs avanzados, enlaces directos a recursos universitarios (biblioteca virtual, sistemas de gestión estudiantil), programación de citas con orientadores académicos. [cite: 66, 67]",
+      "Fortalecer la integración con las líneas de investigación institucionales (desarrollo sustentable, gestión pública, innovación educativa, aplicaciones tecnológicas). [cite: 68, 69]"
+    ]
+  }
+}

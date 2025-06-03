@@ -1,0 +1,5 @@
+/* resources/css/app.css */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Aquí puedes añadir tus estilos CSS personalizados */
+/* Colores y animaciones definidos en el head de chatbot.blade.php */
