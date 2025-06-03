@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         userInput.disabled = true; // Deshabilitar input
         sendMessageBtn.disabled = true; // Deshabilitar botón enviar
 
-        showTypingIndicator();
+        showTypingIndicator(); // Mostrar el indicador de escritura
 
         try {
             const response = await fetch('/api/chat/send', {
@@ -141,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            hideTypingIndicator();
+            
+            hideTypingIndicator(); // Ocultar el indicador después de recibir la respuesta del bot
             addMessage(data.bot_response, false); // Mostrar respuesta del bot
 
             // Lógica para mostrar botones de respuesta rápida basados en la respuesta del bot
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error al enviar mensaje:', error);
-            hideTypingIndicator();
+            hideTypingIndicator(); // Ocultar el indicador si hay un error
             addMessage('Lo siento, hubo un error al procesar tu solicitud. Por favor, inténtalo de nuevo.', false);
         } finally {
             userInput.disabled = false; // Habilitar input
