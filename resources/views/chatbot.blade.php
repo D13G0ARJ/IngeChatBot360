@@ -111,6 +111,17 @@
         }
 
         /* Estilos para el indicador de escritura */
+        .typing-indicator {
+            margin-top: 0.75rem; /* Espacio entre el último mensaje y el indicador */
+            padding: 0.75rem 1rem; /* Padding similar a las burbujas */
+            border-radius: 0.75rem; /* Bordes redondeados */
+            background-color: var(--bubble-bot-light); /* Color de fondo del indicador */
+            color: var(--text-color-dark); /* Color del texto del indicador */
+            font-style: italic;
+            font-size: 0.9rem;
+            align-self: flex-start; /* Alinea a la izquierda */
+            max-width: 75%; /* Ancho máximo */
+        }
         .typing-indicator span {
             opacity: 0.2;
             animation: blink 1.4s infinite;
@@ -272,7 +283,7 @@
                 </div>
             </div>
 
-            <!-- Indicador de "Escribiendo..." -->
+            <!-- Indicador de "Escribiendo..." (Ahora dentro de chat-display y al final) -->
             <div id="typing-indicator" class="d-flex align-items-center typing-indicator hidden">
                 <img src="{{ asset('images/bot_avatar.png') }}" alt="Bot Avatar" class="avatar me-3">
                 <div class="bg-light text-muted fst-italic fs-6 message-bubble">
