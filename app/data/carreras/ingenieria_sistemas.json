@@ -1,9 +1,8 @@
 {
-  "nombre": "Ingeniería de Sistemas",
-  "regimen": "Diurno",
+  "carrera": "Ingeniería de Sistemas",
   "vigencia_pensum": "2010",
-  "descripcion": "La Ingeniería de Sistemas en la UNEFA forma profesionales capacitados para diseñar, implementar y gestionar sistemas computarizados, así como para analizar, desarrollar y optimizar soluciones tecnológicas en diversas áreas. El programa se enfoca en una sólida base en matemáticas, programación y ciencias de la computación, preparando al egresado para el campo laboral y la investigación en el ámbito tecnológico.",
-  "perfil_egresado": "El egresado de Ingeniería de Sistemas de la UNEFA está preparado para desempeñarse en el diseño, desarrollo, implementación, mantenimiento y gestión de sistemas de información, software y hardware. Posee competencias en análisis de datos, redes, sistemas operativos, inteligencia artificial y gestión de proyectos tecnológicos, siendo capaz de integrar soluciones innovadoras en el contexto empresarial y social.",
+  "descripcion_carrera": "La Ingeniería de Sistemas en la UNEFA forma profesionales capacitados para diseñar, implementar y gestionar sistemas computarizados, así como para analizar, desarrollar y optimizar soluciones tecnológicas en diversas áreas. El programa se enfoca en una sólida base en matemáticas, programación y ciencias de la computación, preparando al egresado para el campo laboral y la investigación en el ámbito tecnológico, adaptándose a las necesidades de formación tanto en horario diurno como nocturno.",
+  "perfil_egresado_comun": "El egresado de Ingeniería de Sistemas de la UNEFA está preparado para desempeñarse en el diseño, desarrollo, implementación, mantenimiento y gestión de sistemas de información, software y hardware. Posee competencias en análisis de datos, redes, sistemas operativos, inteligencia artificial y gestión de proyectos tecnológicos, siendo capaz de integrar soluciones innovadoras en el contexto empresarial y social, independientemente del régimen de estudio.",
   "salidas_profesionales": [
     "Desarrollador de Software (Frontend, Backend, Fullstack)",
     "Analista de Sistemas",
@@ -16,83 +15,173 @@
     "Gerente de Informática",
     "Investigador en Áreas de Tecnología"
   ],
-  "duracion": "10 semestres (5 años)",
-  "unidades_credito_totales": "224 UC",
-  "plan_estudios": {
-    "1°_semestre": [
-      {"codigo": "ADG-25132", "asignatura": "Educación Ambiental", "uc": 2},
-      {"codigo": "ADG-25123", "asignatura": "Hombre, Sociedad, Ciencia y Tec.", "uc": 2},
-      {"codigo": "IDM-24113", "asignatura": "Inglés I", "uc": 3},
-      {"codigo": "MAT-21212", "asignatura": "Dibujo", "uc": 2},
-      {"codigo": "MAT-21215", "asignatura": "Matemática I", "uc": 5},
-      {"codigo": "MAT-21524", "asignatura": "Geometría Analítica", "uc": 4},
-      {"codigo": "ADG-25131", "asignatura": "Seminario I", "uc": 1},
-      {"codigo": "DIN-21113", "asignatura": "Defensa Integral de la Nación I", "uc": 3}
-    ],
-    "2°_semestre": [
-      {"codigo": "IDM-24123", "asignatura": "Inglés II", "uc": 3},
-      {"codigo": "QUF-22014", "asignatura": "Química General", "uc": 4},
-      {"codigo": "QUF-23015", "asignatura": "Física I", "uc": 5},
-      {"codigo": "MAT-21225", "asignatura": "Matemática II", "uc": 5},
-      {"codigo": "MAT-21114", "asignatura": "Álgebra Lineal", "uc": 4},
-      {"codigo": "ADG-25141", "asignatura": "Seminario II", "uc": 1},
-      {"codigo": "DIN-21123", "asignatura": "Defensa Integral de la Nación II", "uc": 3}
-    ],
-    "3°_semestre": [
-      {"codigo": "QUF-23025", "asignatura": "Física II", "uc": 5},
-      {"codigo": "MAT-21235", "asignatura": "Matemática III", "uc": 5},
-      {"codigo": "MAT-21414", "asignatura": "Probabilidades y Estadística", "uc": 4},
-      {"codigo": "SYC-22113", "asignatura": "Programación", "uc": 4},
-      {"codigo": "AGG-22313", "asignatura": "Sistemas Administrativos", "uc": 3},
-      {"codigo": "DIN-21133", "asignatura": "Defensa Integral de la Nación III", "uc": 3}
-    ],
-    "4°_semestre": [
-      {"codigo": "SYC-32114", "asignatura": "Teoría de los Sistemas", "uc": 4},
-      {"codigo": "MAT-31714", "asignatura": "Cálculo Numérico", "uc": 4},
-      {"codigo": "MAT-31214", "asignatura": "Lógica Matemática", "uc": 4},
-      {"codigo": "SYC-32225", "asignatura": "Lenguajes de Programación I", "uc": 5},
-      {"codigo": "SYC-32414", "asignatura": "Procesamiento de Datos", "uc": 4},
-      {"codigo": "AGL-30214", "asignatura": "Sistemas de Producción", "uc": 4},
-      {"codigo": "DIN-31143", "asignatura": "Defensa Integral de la Nación IV", "uc": 3}
-    ],
-    "5°_semestre": [
-      {"codigo": "MAT-31114", "asignatura": "Teoría de Grafos", "uc": 4},
-      {"codigo": "SYC-32235", "asignatura": "Lenguajes de Programación II", "uc": 5},
-      {"codigo": "MAT-30925", "asignatura": "Investigación de Operaciones", "uc": 5},
-      {"codigo": "ELN-30514", "asignatura": "Circuitos Lógicos", "uc": 4},
-      {"codigo": "SYC-32514", "asignatura": "Análisis de Sistemas", "uc": 4},
-      {"codigo": "SYC-32614", "asignatura": "Bases de Datos", "uc": 4},
-      {"codigo": "DIN-31153", "asignatura": "Defensa Integral de la Nación V", "uc": 3}
-    ],
-    "6°_semestre": [
-      {"codigo": "MAT-30935", "asignatura": "Optimización No Lineal", "uc": 5},
-      {"codigo": "SYC-32245", "asignatura": "Lenguajes de Programación III", "uc": 5},
-      {"codigo": "MAT-31414", "asignatura": "Procesos Estocásticos", "uc": 3},
-      {"codigo": "SYC-30525", "asignatura": "Arquitectura del Computador", "uc": 4},
-      {"codigo": "SYC-32524", "asignatura": "Diseño de Sistemas", "uc": 4},
-      {"codigo": "SYC-30834", "asignatura": "Sistemas Operativos", "uc": 4},
-      {"codigo": "DIN-31163", "asignatura": "Defensa Integral de la Nación VI", "uc": 3}
-    ],
-    "7°_semestre": [
-      {"codigo": "SYC-32714", "asignatura": "Implantación de Sistemas", "uc": 4},
-      {"codigo": "ADG-30214", "asignatura": "Metodología de la Investigación", "uc": 3},
-      {"codigo": "MAT-30945", "asignatura": "Simulación y Modelos", "uc": 4},
-      {"codigo": "SYC-31644", "asignatura": "Redes", "uc": 4},
-      {"codigo": "ADG-30224", "asignatura": "Gerencia de la Informática", "uc": 4},
-      {"asignatura": "Electiva Técnica", "uc": 3},
-      {"asignatura": "Electiva No Técnica", "uc": 3},
-      {"codigo": "DIN-31173", "asignatura": "Defensa Integral de la Nación VII", "uc": 3}
-    ],
-    "8°_semestre": [
-      {"codigo": "MAT-31314", "asignatura": "Teoría de Decisiones", "uc": 4},
-      {"codigo": "SYC-32814", "asignatura": "Auditoría de Sistemas", "uc": 4},
-      {"codigo": "CJU-37314", "asignatura": "Marco Legal para el Ejercicio de la Ingeniería", "uc": 4},
-      {"codigo": "TTC-31154", "asignatura": "Teleprocesos", "uc": 4},
-      {"asignatura": "Electiva Técnica", "uc": 3},
-      {"codigo": "DIN-31183", "asignatura": "Defensa Integral de la Nación VIII", "uc": 3}
-    ],
-    "9°_semestre": [
-      {"codigo": "TGR-30010", "asignatura": "Trabajo Especial de Grado", "uc": 10}
-    ]
+  "regimenes": {
+    "Diurno": {
+      "duracion": "9 semestres (4.5 años incluyendo T.E.G.)",
+      "unidades_credito_totales": "224 UC",
+      "plan_estudios": {
+        "1°_semestre": [
+          { "codigo": "ADG-25132", "asignatura": "Educación Ambiental", "uc": 2 },
+          { "codigo": "ADG-25123", "asignatura": "Hombre, Sociedad, Ciencia y Tec.", "uc": 2 },
+          { "codigo": "IDM-24113", "asignatura": "Inglés I", "uc": 3 },
+          { "codigo": "MAT-21212", "asignatura": "Dibujo", "uc": 2 },
+          { "codigo": "MAT-21215", "asignatura": "Matemática I", "uc": 5, "requisitos": ["CO.MAT-21524"] },
+          { "codigo": "MAT-21524", "asignatura": "Geometría Analítica", "uc": 4, "requisitos": ["CO.MAT-21215"] },
+          { "codigo": "ADG-25131", "asignatura": "Seminario I", "uc": 1 },
+          { "codigo": "DIN-21113", "asignatura": "Defensa Integral de la Nación I", "uc": 3 }
+        ],
+        "2°_semestre": [
+          { "codigo": "IDM-24123", "asignatura": "Inglés II", "uc": 3, "requisitos": ["IDM-24113"] },
+          { "codigo": "QUF-22014", "asignatura": "Química General", "uc": 4 },
+          { "codigo": "QUF-23015", "asignatura": "Física I", "uc": 5, "requisitos": ["MAT-21215", "MAT-21524"] },
+          { "codigo": "MAT-21225", "asignatura": "Matemática II", "uc": 5, "requisitos": ["MAT-21215", "MAT-21524"] },
+          { "codigo": "MAT-21114", "asignatura": "Álgebra Lineal", "uc": 4, "requisitos": ["MAT-21215", "MAT-21524"] },
+          { "codigo": "ADG-25141", "asignatura": "Seminario II", "uc": 1, "requisitos": ["ADG-25131"] },
+          { "codigo": "DIN-21123", "asignatura": "Defensa Integral de la Nación II", "uc": 3, "requisitos": ["DIN-21113"] }
+        ],
+        "3°_semestre": [
+          { "codigo": "QUF-23025", "asignatura": "Física II", "uc": 5, "requisitos": ["QUF-23015", "MAT-21225"] },
+          { "codigo": "MAT-21235", "asignatura": "Matemática III", "uc": 5, "requisitos": ["MAT-21225"] },
+          { "codigo": "MAT-21414", "asignatura": "Probabilidades y Estadística", "uc": 4, "requisitos": ["MAT-21225"] },
+          { "codigo": "SYC-22113", "asignatura": "Programación", "uc": 4 },
+          { "codigo": "AGG-22313", "asignatura": "Sistemas Administrativos", "uc": 3 },
+          { "codigo": "DIN-21133", "asignatura": "Defensa Integral de la Nación III", "uc": 3 }
+        ],
+        "4°_semestre": [
+          { "codigo": "SYC-32114", "asignatura": "Teoría de los Sistemas", "uc": 4 },
+          { "codigo": "MAT-31714", "asignatura": "Cálculo Numérico", "uc": 4, "requisitos": ["MAT-21235"] },
+          { "codigo": "MAT-31214", "asignatura": "Lógica Matemática", "uc": 4, "requisitos": ["MAT-21114"] },
+          { "codigo": "SYC-32225", "asignatura": "Lenguajes de Programación I", "uc": 5, "requisitos": ["SYC-22113"] },
+          { "codigo": "SYC-32414", "asignatura": "Procesamiento de Datos", "uc": 4 },
+          { "codigo": "AGL-30214", "asignatura": "Sistemas de Producción", "uc": 4, "requisitos": ["AGG-22313"] },
+          { "codigo": "DIN-31143", "asignatura": "Defensa Integral de la Nación IV", "uc": 3 }
+        ],
+        "5°_semestre": [
+          { "codigo": "MAT-31114", "asignatura": "Teoría de Grafos", "uc": 4, "requisitos": ["MAT-21414"] },
+          { "codigo": "SYC-32235", "asignatura": "Lenguajes de Programación II", "uc": 5, "requisitos": ["SYC-32225"] },
+          { "codigo": "MAT-30925", "asignatura": "Investigación de Operaciones", "uc": 5, "requisitos": ["MAT-31714"] },
+          { "codigo": "ELN-30514", "asignatura": "Circuitos Lógicos", "uc": 4, "requisitos": ["MAT-31214"] },
+          { "codigo": "SYC-32514", "asignatura": "Análisis de Sistemas", "uc": 4, "requisitos": ["SYC-32114"] },
+          { "codigo": "SYC-32614", "asignatura": "Bases de Datos", "uc": 4, "requisitos": ["SYC-32414"] },
+          { "codigo": "DIN-31153", "asignatura": "Defensa Integral de la Nación V", "uc": 3 }
+        ],
+        "6°_semestre": [
+          { "codigo": "MAT-30935", "asignatura": "Optimización No Lineal", "uc": 5, "requisitos": ["MAT-30925"] },
+          { "codigo": "SYC-32245", "asignatura": "Lenguajes de Programación III", "uc": 5, "requisitos": ["SYC-32235"] },
+          { "codigo": "MAT-31414", "asignatura": "Procesos Estocásticos", "uc": 3, "requisitos": ["MAT-30925", "MAT-31114"] },
+          { "codigo": "SYC-30525", "asignatura": "Arquitectura del Computador", "uc": 4, "requisitos": ["ELN-30514"] },
+          { "codigo": "SYC-32524", "asignatura": "Diseño de Sistemas", "uc": 4, "requisitos": ["SYC-32514"] },
+          { "codigo": "SYC-30834", "asignatura": "Sistemas Operativos", "uc": 4, "requisitos": ["CO-SYC-30525"] },
+          { "codigo": "DIN-31163", "asignatura": "Defensa Integral de la Nación VI", "uc": 3 }
+        ],
+        "7°_semestre": [
+          { "codigo": "SYC-32714", "asignatura": "Implantación de Sistemas", "uc": 4, "requisitos": ["SYC-32524"] },
+          { "codigo": "ADG-30214", "asignatura": "Metodología de la Investigación", "uc": 3 },
+          { "codigo": "MAT-30945", "asignatura": "Simulación y Modelos", "uc": 4, "requisitos": ["MAT-30935", "MAT-31414"] },
+          { "codigo": "SYC-31644", "asignatura": "Redes", "uc": 4, "requisitos": ["SYC-30834"] },
+          { "codigo": "ADG-30224", "asignatura": "Gerencia de la Informática", "uc": 4 },
+          { "asignatura": "Electiva Técnica", "uc": 3 },
+          { "asignatura": "Electiva No Técnica", "uc": 3 },
+          { "codigo": "DIN-31173", "asignatura": "Defensa Integral de la Nación VII", "uc": 3 }
+        ],
+        "8°_semestre": [
+          { "codigo": "MAT-31314", "asignatura": "Teoría de Decisiones", "uc": 4, "requisitos": ["MAT-30945"] },
+          { "codigo": "SYC-32814", "asignatura": "Auditoría de Sistemas", "uc": 4, "requisitos": ["SYC-32714"] },
+          { "codigo": "CJU-37314", "asignatura": "Marco Legal para el Ejercicio de la Ingeniería", "uc": 4 },
+          { "codigo": "TTC-31154", "asignatura": "Teleprocesos", "uc": 4, "requisitos": ["SYC-31644"] },
+          { "asignatura": "Electiva Técnica", "uc": 3 },
+          { "codigo": "DIN-31183", "asignatura": "Defensa Integral de la Nación VIII", "uc": 3 }
+        ],
+        "9°_semestre": [
+          { "codigo": "TGR-30010", "asignatura": "Trabajo Especial de Grado", "uc": 10 }
+        ]
+      }
+    },
+    "Nocturno": {
+      "duracion": "10 semestres + Trabajo Especial de Grado",
+      "unidades_credito_totales": "224 UC",
+      "plan_estudios": {
+        "1°_semestre": [
+          { "codigo": "ADG-25132", "asignatura": "Educación Ambiental", "uc": 2 },
+          { "codigo": "ADG-25123", "asignatura": "Hombre, Sociedad, Ciencia y Tec.", "uc": 2 },
+          { "codigo": "IDM-24113", "asignatura": "Inglés I", "uc": 3 },
+          { "codigo": "MAT-21212", "asignatura": "Dibujo", "uc": 2 },
+          { "codigo": "MAT-21215", "asignatura": "Matemática I", "uc": 5, "requisitos": ["CO.MAT-21524"] },
+          { "codigo": "MAT-21524", "asignatura": "Geometría Analítica", "uc": 4, "requisitos": ["CO.MAT-21215"] },
+          { "codigo": "DIN-21113", "asignatura": "Defensa Integral de la Nación I", "uc": 3 }
+        ],
+        "2°_semestre": [
+          { "codigo": "ADG-25131", "asignatura": "Seminario I", "uc": 1 },
+          { "codigo": "IDM-24123", "asignatura": "Inglés II", "uc": 3, "requisitos": ["IDM-24113"] },
+          { "codigo": "QUF-22014", "asignatura": "Química General", "uc": 4 },
+          { "codigo": "QUF-23015", "asignatura": "Física I", "uc": 5, "requisitos": ["MAT-21215", "MAT-21524"] },
+          { "codigo": "MAT-21225", "asignatura": "Matemática II", "uc": 5, "requisitos": ["MAT-21215", "MAT-21524"] },
+          { "codigo": "MAT-21114", "asignatura": "Álgebra Lineal", "uc": 4, "requisitos": ["MAT-21215", "MAT-21524"] },
+          { "codigo": "DIN-21123", "asignatura": "Defensa Integral de la Nación II", "uc": 3, "requisitos": ["DIN-21113"] }
+        ],
+        "3°_semestre": [
+          { "codigo": "ADG-25141", "asignatura": "Seminario II", "uc": 1 },
+          { "codigo": "QUF-23025", "asignatura": "Física II", "uc": 5, "requisitos": ["QUF-23015", "MAT-21225"] },
+          { "codigo": "MAT-21235", "asignatura": "Matemática III", "uc": 5, "requisitos": ["MAT-21225"] },
+          { "codigo": "MAT-21414", "asignatura": "Probabilidades y Estadística", "uc": 4, "requisitos": ["MAT-21225"] },
+          { "codigo": "SYC-22113", "asignatura": "Programación", "uc": 3 },
+          { "codigo": "DIN-21133", "asignatura": "Defensa Integral de la Nación III", "uc": 3 }
+        ],
+        "4°_semestre": [
+          { "codigo": "AGG-22313", "asignatura": "Sistemas Administrativos", "uc": 3 },
+          { "codigo": "SYC-31214", "asignatura": "Teoría de los Sistemas", "uc": 4 },
+          { "codigo": "SYC-31114", "asignatura": "Lógica Matemática", "uc": 4, "requisitos": ["MAT-21114"] },
+          { "codigo": "SYC-32225", "asignatura": "Lenguajes de Programación I", "uc": 5, "requisitos": ["SYC-22113"] },
+          { "codigo": "DIN-31143", "asignatura": "Defensa Integral de la Nación IV", "uc": 3 }
+        ],
+        "5°_semestre": [
+          { "codigo": "AGL-30214", "asignatura": "Sistemas de Producción", "uc": 4, "requisitos": ["AGG-22313"] },
+          { "codigo": "SYC-32314", "asignatura": "Procesamiento de Datos", "uc": 4 },
+          { "codigo": "SYC-31714", "asignatura": "Cálculo Numérico", "uc": 4, "requisitos": ["MAT-21235"] },
+          { "codigo": "MAT-31114", "asignatura": "Teoría de Grafos", "uc": 4, "requisitos": ["MAT-31213", "MAT-21414"] },
+          { "codigo": "SYC-32235", "asignatura": "Lenguajes de Programación II", "uc": 5, "requisitos": ["SYC-32225"] },
+          { "codigo": "DIN-31153", "asignatura": "Defensa Integral de la Nación V", "uc": 3 }
+        ],
+        "6°_semestre": [
+          { "codigo": "MAT-30925", "asignatura": "Investigación de Operaciones", "uc": 5, "requisitos": ["MAT-31714"] },
+          { "codigo": "ELN-30514", "asignatura": "Circuitos Lógicos", "uc": 4, "requisitos": ["MAT-31214"] },
+          { "codigo": "SYC-32514", "asignatura": "Análisis de Sistemas", "uc": 4, "requisitos": ["SYC-32114"] },
+          { "codigo": "SYC-32614", "asignatura": "Bases de Datos", "uc": 4, "requisitos": ["SYC-32414"] },
+          { "codigo": "SYC-32245", "asignatura": "Lenguajes de Programación III", "uc": 5, "requisitos": ["SYC-32235"] },
+          { "codigo": "DIN-31163", "asignatura": "Defensa Integral de la Nación VI", "uc": 3 }
+        ],
+        "7°_semestre": [
+          { "codigo": "MAT-30935", "asignatura": "Optimización No Lineal", "uc": 4, "requisitos": ["MAT-30925"] },
+          { "codigo": "MAT-31414", "asignatura": "Procesos Estocásticos", "uc": 4, "requisitos": ["MAT-30925", "MAT-31114"] },
+          { "codigo": "SYC-30525", "asignatura": "Arquitectura del Computador", "uc": 5, "requisitos": ["ELN-30514"] },
+          { "codigo": "SYC-32524", "asignatura": "Diseño de Sistemas", "uc": 4, "requisitos": ["SYC-32514"] },
+          { "codigo": "SYC-30834", "asignatura": "Sistemas Operativos", "uc": 4, "requisitos": ["CO-SYC-30525"] },
+          { "codigo": "DIN-31173", "asignatura": "Defensa Integral de la Nación VII", "uc": 3 }
+        ],
+        "8°_semestre": [
+          { "codigo": "SYC-32714", "asignatura": "Implantación de Sistemas", "uc": 4, "requisitos": ["SYC-32524"] },
+          { "codigo": "ADG-30214", "asignatura": "Metodología de la Investigación", "uc": 4 },
+          { "codigo": "MAT-30945", "asignatura": "Simulación y Modelos", "uc": 5, "requisitos": ["MAT-30935", "MAT-31414"] },
+          { "codigo": "SYC-31644", "asignatura": "Redes", "uc": 4, "requisitos": ["SYC-30834"] },
+          { "codigo": "ADG-30224", "asignatura": "Gerencia de la Informática", "uc": 4 },
+          { "codigo": "DIN-31183", "asignatura": "Defensa Integral de la Nación VIII", "uc": 3 }
+        ],
+        "9°_semestre": [
+          { "codigo": "MAT-31314", "asignatura": "Teoría de Decisiones", "uc": 4, "requisitos": ["MAT-30945"] },
+          { "codigo": "SYC-32814", "asignatura": "Auditoría de Sistemas", "uc": 4, "requisitos": ["SYC-32714"] },
+          { "asignatura": "Electiva Técnica", "uc": 3 },
+          { "asignatura": "Electiva No Técnica", "uc": 3 }
+        ],
+        "10°_semestre": [
+          { "codigo": "CJU-37314", "asignatura": "Marco Legal para el Ejercicio de la Ingeniería", "uc": 4 },
+          { "codigo": "TTC-31154", "asignatura": "Teleprocesos", "uc": 4, "requisitos": ["SYC-31644"] },
+          { "asignatura": "Electiva Técnica", "uc": 3 },
+          { "asignatura": "Electiva No Técnica", "uc": 3 }
+        ],
+        "11°_semestre": [
+          { "codigo": "TGR-30010", "asignatura": "Trabajo Especial de Grado", "uc": 10 }
+        ]
+      }
+    }
   }
 }
