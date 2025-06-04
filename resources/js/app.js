@@ -76,6 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función para mostrar el indicador de escritura
     function showTypingIndicator() {
+        // Mueve el indicador al final del chatDisplay para asegurar que aparezca abajo
+        chatDisplay.appendChild(typingIndicator); 
         typingIndicator.classList.remove('hidden');
         chatDisplay.scrollTop = chatDisplay.scrollHeight; // Scroll al final
     }

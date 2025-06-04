@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ChatController; // ¡Esta línea es crucial!
+use App\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,12 +15,15 @@ use App\Http\Controllers\ChatController; // ¡Esta línea es crucial!
 |
 */
 
-// Si no estás usando autenticación Sanctum para el chatbot,
-// puedes comentar o eliminar esta ruta si no la necesitas.
+// Agrupar las rutas del chatbot bajo el middleware 'web' para habilitar la sesión
+// Esto asegura que el estado de la conversación (session) persista entre solicitudes.
+Route::middleware('web')->group(function () {
+    Route::post('/chat/send', [ChatController::class, 'sendMessage']);
+    Route::post('/chat/restart', [ChatController::class, 'restartChat']);
+});
+
+// Puedes mantener otras rutas API aquí si las tienes, sin el middleware 'web'
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
 
-// Rutas para el Chatbot
-Route::post('/chat/send', [ChatController::class, 'sendMessage']);
-Route::post('/chat/restart', [ChatController::class, 'restartChat']);
