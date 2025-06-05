@@ -76,6 +76,12 @@
             display: flex;
             flex-direction: column;
             gap: 0.75rem; /* gap-3 */
+            /* --- INICIO: AÑADIR IMAGEN DE FONDO AQUÍ --- */
+            background-image: url('{{ asset('images/fondo_chat.png') }}'); /* RUTA DE LA IMAGEN ACTUALIZADA */
+            background-size: cover; /* Cubre todo el área sin distorsionar la imagen */
+            background-position: center; /* Centra la imagen en el fondo */
+            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            /* --- FIN: AÑADIR IMAGEN DE FONDO AQUÍ --- */
         }
 
         /* Estilos para burbujas de chat */
@@ -134,7 +140,13 @@
         /* Estilos para el área de botones rápidos */
         .quick-reply-buttons-area {
             padding: 0.75rem; /* p-3 */
-            background-color: var(--chat-bg-color);
+            /* --- INICIO: AÑADIR IMAGEN DE FONDO AQUÍ PARA BOTONES --- */
+            background-image: url('{{ asset('images/fondo_chat.png') }}'); /* RUTA DE LA IMAGEN ACTUALIZADA */
+            background-size: cover; /* Cubre todo el área sin distorsionar la imagen */
+            background-position: center; /* Centra la imagen en el fondo */
+            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            /* --- FIN: AÑADIR IMAGEN DE FONDO AQUÍ PARA BOTONES --- */
+            background-color: var(--chat-bg-color); /* Fallback o capa superior si la imagen no carga */
             display: flex;
             flex-wrap: wrap;
             justify-content: flex-start;
