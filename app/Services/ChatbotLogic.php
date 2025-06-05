@@ -18,14 +18,15 @@ class ChatbotLogic
     {
         $this->dataManager = $dataManager;
         $this->geminiApi = $geminiApi;
-        // Definimos la instrucción del sistema aquí, haciéndola más estricta
-        $this->systemInstruction = "Eres IngeChat 360°, un asistente virtual especializado en proporcionar información precisa y detallada sobre las carreras de Ingeniería (Sistemas, Mecánica, Telecomunicaciones y Eléctrica) de la UNEFA Núcleo Miranda, Sede Los Teques. Tu objetivo es asistir a estudiantes actuales y futuros con consultas académicas y profesionales relacionadas EXCLUSIVAMENTE con estas carreras y la información institucional de la UNEFA. Si la pregunta no está directamente relacionada con las carreras de ingeniería de la UNEFA o información institucional, responde amablemente que tu función es específica y no puedes asistir con ese tema. NO respondas a preguntas de conocimiento general ni a temas externos a la UNEFA. Proporciona respuestas concisas pero informativas, y si es posible, sugiere dónde encontrar más detalles dentro de tu ámbito de conocimiento.";
+        // Definimos la instrucción del sistema aquí, haciéndola MÁS ESTRICTA
+        $this->systemInstruction = "Eres IngeChat 360°, un asistente virtual diseñado para ofrecer información exhaustiva y precisa sobre las carreras de Ingeniería (Sistemas, Mecánica, Telecomunicaciones y Eléctrica) de la UNEFA Núcleo Miranda, Sede Los Teques. Tu misión es responder preguntas académicas y profesionales relacionadas con el contenido, temáticas y aplicaciones de estas cuatro ingenierías, incluyendo pero no limitándose a: planes de estudio, salidas profesionales, conceptos fundamentales, resolución de problemas típicos (ej. ecuaciones, factorización, análisis de circuitos), herramientas comunes, y cualquier otra consulta que surja directamente del estudio o ejercicio de estas disciplinas. También puedes proporcionar información institucional pertinente de la UNEFA relacionada con estas carreras. Si una pregunta no está directamente vinculada con el ámbito académico o profesional de las ingenierías especificadas de la UNEFA Los Teques, o con información institucional relevante, debes responder de manera cortés que tu función es especializada y no puedes asistir con ese tema. Bajo ninguna circunstancia respondas a preguntas de conocimiento general, temas personales, o asuntos ajenos a la UNEFA y sus carreras de ingeniería. Proporciona respuestas claras, concisas y orientadas al detalle, y si es apropiado, sugiere dónde profundizar en el tema dentro de tu área de experticia.";
         $this->startNewChatSession();
     }
 
     public function startNewChatSession()
     {
         // Al iniciar una nueva sesión, añadimos la instrucción del sistema al historial
+        // El historial siempre comenzará con la instrucción del sistema.
         $this->chatHistory = [
             ['role' => 'user', 'parts' => [['text' => $this->systemInstruction]]]
         ];
@@ -39,7 +40,23 @@ class ChatbotLogic
      */
     public function setChatHistory(array $history)
     {
-        $this->chatHistory = $history;
+        // Asegurarse de que la instrucción del sistema sea el primer elemento si no está.
+        // Esto previene que se duplique si ya está en la sesión, pero la añade si la sesión está vacía.
+        if (empty($history) || !isset($history[0]['parts'][0]['text']) || $history[0]['parts'][0]['text'] !== $this->systemInstruction) {
+             $this->chatHistory = [['role' => 'user', 'parts' => [['text' => $this->systemInstruction]]]];
+             if (!empty($history)) {
+                 // Añadir el resto del historial si no está vacío y no es solo la instrucción.
+                 // Filtrar la instrucción del sistema si ya existe en el historial cargado para evitar duplicados.
+                 foreach ($history as $item) {
+                     if (!($item['role'] === 'user' && isset($item['parts'][0]['text']) && $item['parts'][0]['text'] === $this->systemInstruction)) {
+                         $this->chatHistory[] = $item;
+                     }
+                 }
+             }
+        } else {
+            $this->chatHistory = $history;
+        }
+
         Log::info('ChatbotLogic: Chat history loaded. Count: ' . count($this->chatHistory));
     }
 
@@ -101,13 +118,15 @@ class ChatbotLogic
                 Log::info('ChatbotLogic: Matched Diurno regime for awaited career. Formatting pensum.');
                 $response = $this->formatPlanEstudios($careerInfoAwaiting['regimenes']['Diurno']['plan_estudios'], $displayCareerNameAwaiting, 'Diurno');
                 $this->conversationState = []; // Clear state after successful match
-                $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                // Ya añadimos el mensaje del usuario más abajo, no lo duplicamos aquí.
+                // La respuesta del bot se añade al final de processMessage.
                 return ['response' => $response, 'quick_replies' => $quickReplies]; // Return immediately
             } elseif ($isNocturno && isset($careerInfoAwaiting['regimenes']['Nocturno'])) {
                 Log::info('ChatbotLogic: Matched Nocturno regime for awaited career. Formatting pensum.');
                 $response = $this->formatPlanEstudios($careerInfoAwaiting['regimenes']['Nocturno']['plan_estudios'], $displayCareerNameAwaiting, 'Nocturno');
                 $this->conversationState = []; // Clear state after successful match
-                $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                // Ya añadimos el mensaje del usuario más abajo, no lo duplicamos aquí.
+                // La respuesta del bot se añade al final de processMessage.
                 return ['response' => $response, 'quick_replies' => $quickReplies]; // Return immediately
             } else {
                 // User did not specify a valid regime for the awaited career.
@@ -118,7 +137,7 @@ class ChatbotLogic
                     if ($currentCareerInfo) {
                         $lowerDisplayCurrentCareerName = strtolower($currentCareerInfo['carrera']);
                         $shortCurrentCareerName = str_replace(['ingeniería de ', 'ingeniería en '], '', $lowerDisplayCurrentCareerName);
-                        $shortCurrentCareerName = str_replace(' ', '', $shortCurrentCareerName);
+                        $shortCurrentCareerName = str_replace(' ', '', $lowerDisplayCurrentCareerName);
 
                         if (str_contains($userMessageLower, $lowerDisplayCurrentCareerName) || str_contains($userMessageLower, $shortCurrentCareerName)) {
                             $mentionedCareerKey = $currentCareerKey;
@@ -132,7 +151,9 @@ class ChatbotLogic
                     // This handles cases where the user changes their mind or re-asks the pensum question.
                     Log::info('ChatbotLogic: User mentioned a career (' . $mentionedCareerKey . ') while awaiting regime. Clearing state and re-processing message.');
                     $this->conversationState = []; // Clear the state
-                    // Recursively call processMessage to re-evaluate the new query from the beginning
+                    // NOTA IMPORTANTE: Para evitar duplicar el mensaje del usuario en el historial
+                    // al re-procesar, no lo añadimos aquí. El sendMessage del controlador
+                    // lo añadirá una vez al principio.
                     return $this->processMessage($userMessage);
                 } else {
                     // If no career was mentioned, and it wasn't a regime, then re-prompt for the regime.
@@ -140,12 +161,17 @@ class ChatbotLogic
                     $response = "Para la carrera de {$displayCareerNameAwaiting}, por favor, indica si deseas el pensum 'diurno' o 'nocturno'.";
                     $quickReplies = ["Diurno", "Nocturno"]; // Suggest buttons for the regime
                     // Keep the state, as we are still waiting for a regime for this career
-                    $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                    // La respuesta del bot se añade al final de processMessage.
                     return ['response' => $response, 'quick_replies' => $quickReplies]; // Return immediately
                 }
             }
         }
         // --- Fin del manejo de estado de conversación ---
+
+        // Añadimos el mensaje del usuario al historial para cualquier procesamiento posterior.
+        // Esto es crucial para que Gemini tenga el contexto completo.
+        $this->chatHistory[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
+
 
         // Prioridad 1: Búsqueda en FAQs
         $faqAnswer = $this->dataManager->getFaqAnswer($userMessageLower);
@@ -157,7 +183,7 @@ class ChatbotLogic
                  $quickReplies = ["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"];
             }
         }
-        // Prioridad 2: Búsqueda en información de carreras
+        // Prioridad 2: Búsqueda en información de carreras y UNEFA
         else {
             $foundCareerKey = null;
             $displayCareerName = null;
@@ -168,7 +194,7 @@ class ChatbotLogic
                     $currentDisplayCareerName = $careerInfo['carrera'];
                     $lowerDisplayCareerName = strtolower($currentDisplayCareerName);
                     $shortCareerName = str_replace(['ingeniería de ', 'ingeniería en '], '', $lowerDisplayCareerName);
-                    $shortCareerName = str_replace(' ', '', $shortCareerName);
+                    $shortCareerName = str_replace(' ', '', $lowerDisplayCareerName);
 
                     if (str_contains($userMessageLower, $lowerDisplayCareerName) || str_contains($userMessageLower, $shortCareerName)) {
                         $foundCareerKey = $careerKey;
@@ -291,48 +317,20 @@ class ChatbotLogic
                 $response = "¡Hola! Soy IngeChat 360°, tu asistente virtual de la UNEFA Núcleo Miranda, Sede Los Teques. Estoy aquí para brindarte información detallada sobre las carreras de Ingeniería: Sistemas, Mecánica, Telecomunicaciones y Eléctrica.\n\n¿En qué carrera estás interesado hoy? O puedes preguntar sobre requisitos de inscripción, perfil del egresado, etc.";
                 $quickReplies = ["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"];
             }
+            // Si no se encuentra ninguna coincidencia local, se consulta a Gemini.
+            // La systemInstruction de Gemini es la encargada de mantener el ámbito.
             else {
-                // Palabras clave para determinar si la pregunta es del contexto UNEFA/carreras
-                $contextKeywords = ['unefa', 'ingenieria', 'carrera', 'sede', 'núcleo', 'nucleo', 'inscrip', 'inscripción', 'preinscripción', 'preinscrip',
-                    'egresado', 'pensum', 'plan de estudio', 'plan curricular', 'perfil', 'salidas profesionales', 'campo laboral',
-                    'mision', 'misión', 'vision', 'visión', 'ubicacion', 'ubicación', 'dirección', 'direccion', 'contacto', 'teléfono',
-                    'telefono', 'correo', 'email', 'correo institucional', 'los teques', 'miranda', 'universidad', 'estudios', 'materias',
-                    'asignaturas', 'semestre', 'trimestre', 'trayecto', 'docente', 'profesor', 'clases', 'horario', 'turno', 'diurno',
-                    'nocturno', 'modalidad', 'presencial', 'virtual', 'beca', 'becas', 'arancel', 'aranceles', 'pago', 'pagos',
-                    'inscripción en línea', 'registro', 'reingreso', 'traslado', 'equivalencia', 'título', 'titulo', 'graduación',
-                    'graduacion', 'nota', 'notas', 'calificación', 'calificacion', 'evaluación', 'evaluacion', 'requisito', 'requisitos',
-                    'documento', 'documentos', 'proceso', 'admisión', 'admision', 'postulación', 'postulacion', 'cupos', 'cupos disponibles',
-                    'oferta académica', 'oferta academica', 'servicio comunitario', 'pasantía', 'pasantias', 'laboratorio', 'laboratorios',
-                    'biblioteca', 'investigación', 'investigacion', 'consejo', 'coordinación', 'coordinacion', 'secretaría', 'secretaria',
-                    'estudiante', 'alumno', 'egreso', 'ingreso', 'nuevo ingreso', 'reingreso', 'sistema', 'mecánica', 'mecanica',
-                    'telecomunicaciones', 'eléctrica', 'electrica', 'sistemas', 'mecatronica', 'civil', 'industrial', 'computación',
-                    'computacion', 'tecnología', 'tecnologia', 'ingeniería', 'ingenieria', 'universitario', 'universitaria', 'postgrado',
-                    'maestría', 'maestria', 'doctorado', 'pregrado', 'pre-universitario', 'preuniversitario', 'becario', 'becarios',
-                    'asistente académico', 'asistente academico', 'departamento', 'decanato', 'rectorado', 'autoridad', 'autoridades',
-                    'reglamento', 'normativa', 'calendario académico', 'calendario academico', 'evento', 'eventos', 'actividad', 'actividades',
-                    'ecuacion','resolver','ejercicio', 'algoritmo', 'telecomunicaciones', 'sistemas de información', 'sistemas informáticos', 'ingeniería industrial', 'ingeniería civil'
-            ];
-                $isContextual = false;
-                foreach ($contextKeywords as $keyword) {
-                    if (str_contains($userMessageLower, $keyword)) {
-                        $isContextual = true;
-                        break;
-                    }
-                }
-                if ($isContextual) {
-                    Log::info('ChatbotLogic: No local match found, but message is contextual. Consulting Gemini API.');
-                    $this->chatHistory[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
-                    $geminiResponse = $this->geminiApi->generateContent($this->chatHistory);
-                    $response = $geminiResponse;
-                } else {
-                    Log::info('ChatbotLogic: No local match found and message is out of scope. Responding with out-of-scope message.');
-                    $response = "Lo siento, solo puedo responder preguntas relacionadas con las carreras de Ingeniería de la UNEFA Núcleo Miranda, Sede Los Teques, o información institucional de la UNEFA.";
-                }
-                // No hay quick replies por defecto si la respuesta es fuera de contexto o viene de Gemini
+                Log::info('ChatbotLogic: No se encontró coincidencia local. Consultando a Gemini API con instrucción de sistema estricta.');
+                // En este punto, $this->chatHistory ya contiene el mensaje del usuario actual
+                // y la systemInstruction al inicio.
+                $geminiResponse = $this->geminiApi->generateContent($this->chatHistory);
+                $response = $geminiResponse;
+                // No hay quick replies por defecto si la respuesta viene de Gemini y no es contextual
             }
         }
 
         // Actualiza el historial de chat con la respuesta del bot
+        // El mensaje del bot se añade al final para mantener el orden cronológico.
         $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
         Log::info('ChatbotLogic: Final response generated: ' . $response);
 
