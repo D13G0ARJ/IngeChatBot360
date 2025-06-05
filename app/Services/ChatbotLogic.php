@@ -19,7 +19,7 @@ class ChatbotLogic
         $this->dataManager = $dataManager;
         $this->geminiApi = $geminiApi;
         // Definimos la instrucción del sistema aquí, haciéndola MÁS ESTRICTA
-        $this->systemInstruction = "Eres IngeChat 360°, un asistente virtual diseñado para ofrecer información exhaustiva y precisa sobre las carreras de Ingeniería (Sistemas, Mecánica, Telecomunicaciones y Eléctrica) de la UNEFA Núcleo Miranda, Sede Los Teques. Tu misión es responder preguntas académicas y profesionales relacionadas con el contenido, temáticas y aplicaciones de estas cuatro ingenierías, incluyendo pero no limitándose a: planes de estudio, salidas profesionales, conceptos fundamentales, resolución de problemas típicos (ej. ecuaciones, factorización, análisis de circuitos), herramientas comunes, y cualquier otra consulta que surja directamente del estudio o ejercicio de estas disciplinas. También puedes proporcionar información institucional pertinente de la UNEFA relacionada con estas carreras. Si una pregunta no está directamente vinculada con el ámbito académico o profesional de las ingenierías especificadas de la UNEFA Los Teques, o con información institucional relevante, debes responder de manera cortés que tu función es especializada y no puedes asistir con ese tema. Bajo ninguna circunstancia respondas a preguntas de conocimiento general, temas personales, o asuntos ajenos a la UNEFA y sus carreras de ingeniería. Proporciona respuestas claras, concisas y orientadas al detalle, y si es apropiado, sugiere dónde profundizar en el tema dentro de tu área de experticia.";
+        $this->systemInstruction = "Eres IngeChat 360°, un asistente virtual diseñado para ofrecer información exhaustiva y precisa sobre las carreras de Ingeniería (Sistemas, Mecánica, Telecomunicaciones y Eléctrica) de la UNEFA Núcleo Miranda, Sede Los Teques. Tu misión es responder preguntas académicas y profesionales relacionadas con el contenido, temáticas y aplicaciones de estas cuatro ingenierías, incluyendo pero no limitándose a: planes de estudio, salidas profesionales, conceptos fundamentales, resolución de problemas típicos (ej. ecuaciones, factorización, análisis de circuitos), herramientas comunes, y cualquier otra consulta que surja directamente del estudio o ejercicio de estas disciplinas. También puedes proporcionar información institucional pertinente de la UNEFA relacionada con estas carreras. Si una pregunta no está directamente vinculada con el ámbito académico o profesional de las ingenierías especificadas de la UNEFA Los Teques, o con información institucional relevante, debes responder de manera cortés que tu función es especializada y no puedes asistir con ese tema. Bajo ninguna circunstancia respondas a preguntas de conocimiento general, temas personales, o asuntos ajenos a la UNEFA y sus carreras de ingeniería. Proporciona respuestas claras, concisas y orientadas al detalle, y si es apropiado, sugiere dónde profundizar en el tema dentro de tu área de experticia. Utiliza formato Markdown (negritas `**texto**`, listas con guiones o números `* item`, saltos de línea) para mejorar la legibilidad y estructura del texto en tus respuestas.";
         $this->startNewChatSession();
     }
 
@@ -31,7 +31,7 @@ class ChatbotLogic
             ['role' => 'user', 'parts' => [['text' => $this->systemInstruction]]]
         ];
         $this->conversationState = []; // Reiniciar estado de conversación
-        Log::info("ChatbotLogic: Nueva sesión de chat iniciada con instrucción del sistema.");
+        Log::info('ChatbotLogic: Nueva sesión de chat iniciada con instrucción del sistema.');
     }
 
     /**
@@ -50,8 +50,8 @@ class ChatbotLogic
                  foreach ($history as $item) {
                      if (!($item['role'] === 'user' && isset($item['parts'][0]['text']) && $item['parts'][0]['text'] === $this->systemInstruction)) {
                          $this->chatHistory[] = $item;
-                     }
-                 }
+                    }
+                }
              }
         } else {
             $this->chatHistory = $history;
@@ -103,34 +103,40 @@ class ChatbotLogic
         Log::info('ChatbotLogic: Processing message: "' . $userMessage . '" (Lower: "' . $userMessageLower . '")');
         Log::info('ChatbotLogic: Current conversation state at start of processMessage: ' . json_encode($this->conversationState));
 
+        // Añadimos el mensaje del usuario al historial al inicio para cualquier procesamiento posterior.
+        // Esto es crucial para que Gemini tenga el contexto completo.
+        $this->chatHistory[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
+
         // --- Manejo de estado de conversación (si se está esperando un régimen) ---
         if (isset($this->conversationState['awaiting_regime_for_career'])) {
             Log::info('ChatbotLogic: Entering awaiting regime state handling.');
-            $careerKeyAwaiting = $this->conversationState['awaiting_regime_for_career']; // Clave de la carrera que estamos esperando
+            $careerKeyAwaiting = $this->conversationState['awaiting_regime_for_career'];
             $careerInfoAwaiting = $this->dataManager->getCarreraInfo($careerKeyAwaiting);
             $displayCareerNameAwaiting = $careerInfoAwaiting['carrera'] ?? ucfirst(str_replace('_', ' ', $careerKeyAwaiting));
+            $awaitingInfoType = $this->conversationState['awaiting_info_type'] ?? null;
 
-            // Check if user is specifying regime for the awaited career
             $isDiurno = str_contains($userMessageLower, 'diurno');
             $isNocturno = str_contains($userMessageLower, 'nocturno');
 
-            if ($isDiurno && isset($careerInfoAwaiting['regimenes']['Diurno'])) {
-                Log::info('ChatbotLogic: Matched Diurno regime for awaited career. Formatting pensum.');
-                $response = $this->formatPlanEstudios($careerInfoAwaiting['regimenes']['Diurno']['plan_estudios'], $displayCareerNameAwaiting, 'Diurno');
-                $this->conversationState = []; // Clear state after successful match
-                // Ya añadimos el mensaje del usuario más abajo, no lo duplicamos aquí.
-                // La respuesta del bot se añade al final de processMessage.
-                return ['response' => $response, 'quick_replies' => $quickReplies]; // Return immediately
-            } elseif ($isNocturno && isset($careerInfoAwaiting['regimenes']['Nocturno'])) {
-                Log::info('ChatbotLogic: Matched Nocturno regime for awaited career. Formatting pensum.');
-                $response = $this->formatPlanEstudios($careerInfoAwaiting['regimenes']['Nocturno']['plan_estudios'], $displayCareerNameAwaiting, 'Nocturno');
-                $this->conversationState = []; // Clear state after successful match
-                // Ya añadimos el mensaje del usuario más abajo, no lo duplicamos aquí.
-                // La respuesta del bot se añade al final de processMessage.
-                return ['response' => $response, 'quick_replies' => $quickReplies]; // Return immediately
+            if (($isDiurno && isset($careerInfoAwaiting['regimenes']['Diurno'])) || ($isNocturno && isset($careerInfoAwaiting['regimenes']['Nocturno']))) {
+                $chosenRegime = $isDiurno ? 'Diurno' : 'Nocturno';
+                Log::info('ChatbotLogic: Matched ' . $chosenRegime . ' regime for awaited career (' . $awaitingInfoType . ').');
+
+                if ($awaitingInfoType === 'pensum') {
+                    $response = $this->formatPlanEstudios($careerInfoAwaiting['regimenes'][$chosenRegime]['plan_estudios'], $displayCareerNameAwaiting, $chosenRegime);
+                } elseif ($awaitingInfoType === 'duracion') {
+                    $duration = $careerInfoAwaiting['regimenes'][$chosenRegime]['duracion'] ?? null;
+                    if ($duration) {
+                        $response = "La duración de la carrera de **{$displayCareerNameAwaiting}** en el régimen **{$chosenRegime}** es: **{$duration}**.";
+                    } else {
+                        $response = "Lo siento, no encontré la duración para **{$displayCareerNameAwaiting}** en el régimen **{$chosenRegime}**.";
+                    }
+                }
+                $this->conversationState = []; // Limpiar estado después de una respuesta exitosa
+                $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                return ['response' => $response, 'quick_replies' => $quickReplies]; // Retornar inmediatamente
             } else {
-                // User did not specify a valid regime for the awaited career.
-                // Now, check if the user is asking about ANY career (including the one we were awaiting)
+                // Si el usuario no especificó un régimen válido, o cambió de carrera, re-procesar.
                 $mentionedCareerKey = null;
                 foreach ($this->dataManager->getAllCarrerasNames() as $currentCareerKey) {
                     $currentCareerInfo = $this->dataManager->getCarreraInfo($currentCareerKey);
@@ -147,30 +153,21 @@ class ChatbotLogic
                 }
 
                 if ($mentionedCareerKey) {
-                    // If a career is mentioned, clear the state and re-process the message from scratch.
-                    // This handles cases where the user changes their mind or re-asks the pensum question.
                     Log::info('ChatbotLogic: User mentioned a career (' . $mentionedCareerKey . ') while awaiting regime. Clearing state and re-processing message.');
-                    $this->conversationState = []; // Clear the state
-                    // NOTA IMPORTANTE: Para evitar duplicar el mensaje del usuario en el historial
-                    // al re-procesar, no lo añadimos aquí. El sendMessage del controlador
-                    // lo añadirá una vez al principio.
-                    return $this->processMessage($userMessage);
+                    $this->conversationState = []; // Limpiar el estado
+                    // No es necesario añadir el mensaje del usuario aquí nuevamente, ya se añadió al principio.
+                    return $this->processMessage($userMessage); // Re-procesar el mensaje desde cero
                 } else {
-                    // If no career was mentioned, and it wasn't a regime, then re-prompt for the regime.
                     Log::info('ChatbotLogic: User input is unrelated to awaited regime or any career. Re-prompting for regime for the awaited career.');
-                    $response = "Para la carrera de {$displayCareerNameAwaiting}, por favor, indica si deseas el pensum 'diurno' o 'nocturno'.";
-                    $quickReplies = ["Diurno", "Nocturno"]; // Suggest buttons for the regime
-                    // Keep the state, as we are still waiting for a regime for this career
-                    // La respuesta del bot se añade al final de processMessage.
-                    return ['response' => $response, 'quick_replies' => $quickReplies]; // Return immediately
+                    $response = "Para la **{$awaitingInfoType}** de **{$displayCareerNameAwaiting}**, por favor, indica si deseas el turno '**diurno**' o '**nocturno**'.";
+                    $quickReplies = ["Diurno", "Nocturno"];
+                    // Mantener el estado, ya que seguimos esperando un régimen.
+                    $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                    return ['response' => $response, 'quick_replies' => $quickReplies];
                 }
             }
         }
         // --- Fin del manejo de estado de conversación ---
-
-        // Añadimos el mensaje del usuario al historial para cualquier procesamiento posterior.
-        // Esto es crucial para que Gemini tenga el contexto completo.
-        $this->chatHistory[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
 
 
         // Prioridad 1: Búsqueda en FAQs
@@ -182,6 +179,8 @@ class ChatbotLogic
             if (str_contains($userMessageLower, 'requisitos de inscripción') || str_contains($userMessageLower, 'ubicación') || str_contains($userMessageLower, 'horario')) {
                  $quickReplies = ["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"];
             }
+            $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+            return ['response' => $response, 'quick_replies' => $quickReplies];
         }
         // Prioridad 2: Búsqueda en información de carreras y UNEFA
         else {
@@ -218,104 +217,174 @@ class ChatbotLogic
                         if ($isDiurno && isset($careerInfo['regimenes']['Diurno'])) {
                             Log::info('ChatbotLogic: Pensum request with Diurno specified.');
                             $response = $this->formatPlanEstudios($careerInfo['regimenes']['Diurno']['plan_estudios'], $displayCareerName, 'Diurno');
+                            $this->conversationState = []; // Limpiar estado
                         } elseif ($isNocturno && isset($careerInfo['regimenes']['Nocturno'])) {
                             Log::info('ChatbotLogic: Pensum request with Nocturno specified.');
                             $response = $this->formatPlanEstudios($careerInfo['regimenes']['Nocturno']['plan_estudios'], $displayCareerName, 'Nocturno');
+                            $this->conversationState = []; // Limpiar estado
                         } elseif (count($regimes) > 1 && (!$isDiurno && !$isNocturno)) {
                             Log::info('ChatbotLogic: Pensum request, multiple regimes, no specific regime given. Asking for clarification.');
-                            $response = "La carrera de {$displayCareerName} tiene planes de estudio para los regímenes " . implode(' y ', $regimes) . ". ¿Cuál te gustaría consultar?";
+                            $response = "La carrera de **{$displayCareerName}** tiene planes de estudio para los regímenes **" . implode('** y **', $regimes) . "**. ¿Cuál te gustaría consultar?";
                             $this->conversationState['awaiting_regime_for_career'] = $foundCareerKey;
+                            $this->conversationState['awaiting_info_type'] = 'pensum'; // Set the info type we are waiting for
                             $quickReplies = ["Diurno", "Nocturno"]; // Sugerir botones para el turno
                         } else if (count($regimes) == 1) {
                             Log::info('ChatbotLogic: Pensum request, single regime available. Using default.');
                             $defaultRegime = $regimes[0];
                             $response = $this->formatPlanEstudios($careerInfo['regimenes'][$defaultRegime]['plan_estudios'], $displayCareerName, $defaultRegime);
+                            $this->conversationState = []; // Limpiar estado
                         } else {
                             Log::info('ChatbotLogic: Pensum information not found or invalid regime for ' . $displayCareerName);
-                            $response = "No encontré información del plan de estudios para {$displayCareerName} o no se especificó un régimen válido.";
+                            $response = "No encontré información del plan de estudios para **{$displayCareerName}** o no se especificó un régimen válido.";
+                            $this->conversationState = []; // Limpiar estado
                         }
+                        $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                        return ['response' => $response, 'quick_replies' => $quickReplies]; // Retornar inmediatamente
                     }
                     else if (str_contains($userMessageLower, 'perfil') || str_contains($userMessageLower, 'egresado')) {
                         Log::info('ChatbotLogic: User asked for profile.');
-                        $response = $careerInfo['perfil_egresado_comun'] ?? "Perfil del egresado para {$displayCareerName} no disponible.";
-                        $quickReplies = ["Pensum de {$displayCareerName}", "Salidas Profesionales de {$displayCareerName}", "Duración de {$displayCareerName}"];
+                        $response = $careerInfo['perfil_egresado_comun'] ?? "Perfil del egresado para **{$displayCareerName}** no disponible.";
+                        $quickReplies = ["Pensum de {$displayCareerName}", "Salidas Profesionales de {$displayCareerName}", "Duración de la carrera de Ingeniería de {$displayCareerName}"]; // Botón actualizado
+                        $this->conversationState = []; // Limpiar estado
+                        $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                        return ['response' => $response, 'quick_replies' => $quickReplies]; // Retornar inmediatamente
                     }
                     else if (str_contains($userMessageLower, 'salidas profesionales') || str_contains($userMessageLower, 'campo laboral')) {
                         Log::info('ChatbotLogic: User asked for career paths.');
                         $salidas = implode(', ', $careerInfo['salidas_profesionales'] ?? []);
                         if ($salidas) {
-                            $response = "Algunas salidas profesionales para {$displayCareerName} incluyen: {$salidas}.";
+                            $response = "Algunas salidas profesionales para **{$displayCareerName}** incluyen: **{$salidas}**.";
                         } else {
-                            $response = "Salidas profesionales para {$displayCareerName} no disponibles.";
+                            $response = "Salidas profesionales para **{$displayCareerName}** no disponibles.";
                         }
-                        $quickReplies = ["Pensum de {$displayCareerName}", "Perfil del Egresado de {$displayCareerName}", "Duración de {$displayCareerName}"];
+                        $quickReplies = ["Pensum de {$displayCareerName}", "Perfil del Egresado de {$displayCareerName}", "Duración de la carrera de Ingeniería de {$displayCareerName}"]; // Botón actualizado
+                        $this->conversationState = []; // Limpiar estado
+                        $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                        return ['response' => $response, 'quick_replies' => $quickReplies]; // Retornar inmediatamente
                     }
                     else if (str_contains($userMessageLower, 'descripcion') || str_contains($userMessageLower, 'que es')) {
                         Log::info('ChatbotLogic: User asked for description.');
-                        $response = $careerInfo['descripcion_carrera'] ?? "Descripción para {$displayCareerName} no disponible.";
-                        $quickReplies = ["Pensum de {$displayCareerName}", "Perfil del Egresado de {$displayCareerName}", "Salidas Profesionales de {$displayCareerName}", "Duración de {$displayCareerName}"];
+                        $response = $careerInfo['descripcion_carrera'] ?? "Descripción para **{$displayCareerName}** no disponible.";
+                        $quickReplies = ["Pensum de {$displayCareerName}", "Perfil del Egresado de {$displayCareerName}", "Salidas Profesionales de {$displayCareerName}", "Duración de la carrera de Ingeniería de {$displayCareerName}"]; // Botón actualizado
+                        $this->conversationState = []; // Limpiar estado
+                        $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                        return ['response' => $response, 'quick_replies' => $quickReplies]; // Retornar inmediatamente
                     }
                     else if (str_contains($userMessageLower, 'duracion')) {
                         Log::info('ChatbotLogic: User asked for duration.');
-                        $durations = [];
-                        foreach ($careerInfo['regimenes'] ?? [] as $regimeName => $regimeData) {
-                            if (isset($regimeData['duracion'])) {
-                                $durations[] = "{$regimeName}: {$regimeData['duracion']}";
-                            }
-                        }
+                        $regimes = array_keys($careerInfo['regimenes'] ?? []);
 
-                        if (!empty($durations)) {
-                            if (count($durations) === 1) {
-                                $response = "La duración de la carrera de {$displayCareerName} es: {$durations[0]}.";
+                        $isDiurno = str_contains($userMessageLower, 'diurno');
+                        $isNocturno = str_contains($userMessageLower, 'nocturno');
+
+                        if ($isDiurno && isset($careerInfo['regimenes']['Diurno'])) {
+                            Log::info('ChatbotLogic: Duration request with Diurno specified.');
+                            $duration = $careerInfo['regimenes']['Diurno']['duracion'] ?? null;
+                            if ($duration) {
+                                $response = "La duración de la carrera de **{$displayCareerName}** en el régimen **Diurno** es: **{$duration}**.";
                             } else {
-                                $response = "La duración de la carrera de {$displayCareerName} es la siguiente: " . implode('; ', $durations) . ".";
+                                $response = "Lo siento, no encontré la duración para **{$displayCareerName}** en el régimen Diurno.";
                             }
+                            $this->conversationState = []; // Limpiar estado
+                        } elseif ($isNocturno && isset($careerInfo['regimenes']['Nocturno'])) {
+                            Log::info('ChatbotLogic: Duration request with Nocturno specified.');
+                            $duration = $careerInfo['regimenes']['Nocturno']['duracion'] ?? null;
+                            if ($duration) {
+                                $response = "La duración de la carrera de **{$displayCareerName}** en el régimen **Nocturno** es: **{$duration}**.";
+                            } else {
+                                $response = "Lo siento, no encontré la duración para **{$displayCareerName}** en el régimen Nocturno.";
+                            }
+                            $this->conversationState = []; // Limpiar estado
+                        } elseif (count($regimes) > 1 && (!$isDiurno && !$isNocturno)) {
+                            Log::info('ChatbotLogic: Duration request, multiple regimes, no specific regime given. Asking for clarification.');
+                            $response = "La carrera de **{$displayCareerName}** tiene duraciones diferentes para los regímenes **" . implode('** y **', $regimes) . "**. ¿Cuál te gustaría consultar?";
+                            $this->conversationState['awaiting_regime_for_career'] = $foundCareerKey;
+                            $this->conversationState['awaiting_info_type'] = 'duracion'; // Establecer el tipo de información que estamos esperando
+                            $quickReplies = ["Diurno", "Nocturno"]; // Sugerir botones para el turno
+                        } else if (count($regimes) == 1) {
+                            Log::info('ChatbotLogic: Duration request, single regime available. Using default.');
+                            $defaultRegime = $regimes[0];
+                            $duration = $careerInfo['regimenes'][$defaultRegime]['duracion'] ?? null;
+                            if ($duration) {
+                                $response = "La duración de la carrera de **{$displayCareerName}** en el régimen **{$defaultRegime}** es: **{$duration}**.";
+                            } else {
+                                $response = "Lo siento, no encontré la duración para **{$displayCareerName}** en el régimen {$defaultRegime}.";
+                            }
+                            $this->conversationState = []; // Limpiar estado
                         } else {
-                            $response = "Duración para {$displayCareerName} no disponible.";
+                            Log::info('ChatbotLogic: Duration information not found for ' . $displayCareerName);
+                            $response = "Duración para **{$displayCareerName}** no disponible.";
+                            $this->conversationState = []; // Limpiar estado
                         }
-                        $quickReplies = ["Pensum de {$displayCareerName}", "Perfil del Egresado de {$displayCareerName}", "Salidas Profesionales de {$displayCareerName}"];
+                        $quickReplies[] = "Pensum de {$displayCareerName}";
+                        $quickReplies[] = "Perfil del Egresado de {$displayCareerName}";
+                        $quickReplies[] = "Salidas Profesionales de {$displayCareerName}";
+                        $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                        return ['response' => $response, 'quick_replies' => $quickReplies]; // Retornar inmediatamente
                     }
                     else {
-                        Log::info('ChatbotLogic: General career info response.');
+                        Log::info('ChatbotLogic: General career info response. (No specific sub-query matched, relying on broader career context).');
                         $response = (
-                            "{$displayCareerName}: " .
+                            "**{$displayCareerName}**: " .
                             ($careerInfo['descripcion_carrera'] ?? 'Descripción no disponible.') . " " .
-                            "Puedes preguntar sobre su perfil de egresado, plan de estudios o salidas profesionales."
+                            "Puedes preguntar sobre su **perfil de egresado**, **plan de estudios** o **salidas profesionales**."
                         );
-                        $quickReplies = ["Pensum de {$displayCareerName}", "Perfil del Egresado de {$displayCareerName}", "Salidas Profesionales de {$displayCareerName}", "Duración de {$displayCareerName}"];
+                        $quickReplies = ["Pensum de {$displayCareerName}", "Perfil del Egresado de {$displayCareerName}", "Salidas Profesionales de {$displayCareerName}", "Duración de la carrera de Ingeniería de {$displayCareerName}"]; // Botón actualizado
+                        $this->conversationState = []; // Limpiar estado
+                        $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                        return ['response' => $response, 'quick_replies' => $quickReplies]; // Retornar inmediatamente
                     }
                 }
             }
             else if (str_contains($userMessageLower, 'mision') || str_contains($userMessageLower, 'misión')) {
                 Log::info('ChatbotLogic: User asked for mission.');
                 $mision = $this->dataManager->getUnefaInfo('mision');
-                $response = $mision ?: "No encontré la misión de la UNEFA.";
+                $response = $mision ?: "Lo siento, no encontré la **misión** de la UNEFA.";
                 $quickReplies = ["Visión de la UNEFA", "¿Qué carreras ofrecen?", "Ubicación de la UNEFA"];
+                $this->conversationState = []; // Limpiar estado
+                $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                return ['response' => $response, 'quick_replies' => $quickReplies];
             }
             else if (str_contains($userMessageLower, 'vision') || str_contains($userMessageLower, 'visión')) {
                 Log::info('ChatbotLogic: User asked for vision.');
                 $vision = $this->dataManager->getUnefaInfo('vision');
-                $response = $vision ?: "No encontré la visión de la UNEFA.";
+                $response = $vision ?: "Lo siento, no encontré la **visión** de la UNEFA.";
                 $quickReplies = ["Misión de la UNEFA", "¿Qué carreras ofrecen?", "Ubicación de la UNEFA"];
+                $this->conversationState = []; // Limpiar estado
+                $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                return ['response' => 'response', 'quick_replies' => $quickReplies];
             }
             else if (str_contains($userMessageLower, 'ubicacion') || str_contains($userMessageLower, 'dirección') || str_contains($userMessageLower, 'donde esta')) {
                 Log::info('ChatbotLogic: User asked for location.');
                 $ubicacion = $this->dataManager->getUnefaInfo('ubicacion');
                 $contactoInfo = $this->dataManager->getUnefaInfo('contacto');
                 $direccion_fisica = $contactoInfo['direccion_fisica'] ?? null;
-                $response = $ubicacion ? "La UNEFA Núcleo Miranda, Sede Los Teques, está ubicada en {$ubicacion}. Dirección física: {$direccion_fisica}." : "No encontré la ubicación de la UNEFA.";
+                $response = $ubicacion ? "La UNEFA Núcleo Miranda, Sede Los Teques, está ubicada en **{$ubicacion}**. Dirección física: **{$direccion_fisica}**." : "Lo siento, no encontré la **ubicación** de la UNEFA.";
                 $quickReplies = ["Requisitos de Inscripción", "Ingeniería de Sistemas", "Misión de la UNEFA"];
+                $this->conversationState = []; // Limpiar estado
+                $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                return ['response' => $response, 'quick_replies' => $quickReplies];
             }
             else if (str_contains($userMessageLower, 'contacto') || str_contains($userMessageLower, 'teléfono') || str_contains($userMessageLower, 'correo')) {
                 Log::info('ChatbotLogic: User asked for contact info.');
                 $contacto = $this->dataManager->getUnefaInfo('contacto');
-                $response = $contacto ? "Puedes contactar a la UNEFA Núcleo Miranda, Sede Los Teques. Dirección física: {$contacto['direccion_fisica']}." : "No encontré información de contacto de la UNEFA.";
+                $direccion_fisica = $contacto['direccion_fisica'] ?? 'no especificada';
+                $telefono_general = $contacto['telefono_general'] ?? 'no disponible';
+                $correo_general = $contacto['correo_general'] ?? 'no disponible';
+
+                $response = "Puedes contactar a la UNEFA Núcleo Miranda, Sede Los Teques. Su **dirección física** es: **{$direccion_fisica}**. El **teléfono general** es: **{$telefono_general}**. El **correo general** es: **{$correo_general}**. Te recomiendo también visitar el sitio web oficial para más detalles.";
                 $quickReplies = ["Ubicación de la UNEFA", "Requisitos de Inscripción"];
+                $this->conversationState = []; // Limpiar estado
+                $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                return ['response' => $response, 'quick_replies' => $quickReplies];
             }
             else if (str_contains($userMessageLower, 'hola') || str_contains($userMessageLower, 'buenas') || str_contains($userMessageLower, 'saludos')) {
                 Log::info('ChatbotLogic: Initial greeting.');
-                $response = "¡Hola! Soy IngeChat 360°, tu asistente virtual de la UNEFA Núcleo Miranda, Sede Los Teques. Estoy aquí para brindarte información detallada sobre las carreras de Ingeniería: Sistemas, Mecánica, Telecomunicaciones y Eléctrica.\n\n¿En qué carrera estás interesado hoy? O puedes preguntar sobre requisitos de inscripción, perfil del egresado, etc.";
+                $response = "¡Hola! Soy **IngeChat 360°**, tu asistente virtual de la UNEFA Núcleo Miranda, Sede Los Teques. Estoy aquí para brindarte información detallada sobre las carreras de Ingeniería: **Sistemas**, **Mecánica**, **Telecomunicaciones** y **Eléctrica**.\n\n¿En qué carrera estás interesado hoy? O puedes preguntar sobre **requisitos de inscripción**, **perfil del egresado**, etc.";
                 $quickReplies = ["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"];
+                $this->conversationState = []; // Limpiar estado
+                $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                return ['response' => $response, 'quick_replies' => $quickReplies];
             }
             // Si no se encuentra ninguna coincidencia local, se consulta a Gemini.
             // La systemInstruction de Gemini es la encargada de mantener el ámbito.
@@ -326,15 +395,11 @@ class ChatbotLogic
                 $geminiResponse = $this->geminiApi->generateContent($this->chatHistory);
                 $response = $geminiResponse;
                 // No hay quick replies por defecto si la respuesta viene de Gemini y no es contextual
+                $this->conversationState = []; // Limpiar estado
+                $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
+                return ['response' => $response, 'quick_replies' => $quickReplies];
             }
         }
-
-        // Actualiza el historial de chat con la respuesta del bot
-        // El mensaje del bot se añade al final para mantener el orden cronológico.
-        $this->chatHistory[] = ['role' => 'model', 'parts' => [['text' => $response]]];
-        Log::info('ChatbotLogic: Final response generated: ' . $response);
-
-        return ['response' => $response, 'quick_replies' => $quickReplies];
     }
 
     /**
@@ -346,22 +411,20 @@ class ChatbotLogic
      */
     private function formatPlanEstudios(array $planEstudios, string $careerName, string $regimeName): string
     {
-        $formattedPlan = "El plan de estudios de {$careerName} ({$regimeName}) es:\n";
+        $formattedPlan = "El plan de estudios de **{$careerName}** en el régimen **{$regimeName}** es:\n\n";
         foreach ($planEstudios as $semester => $courses) {
-            $formattedPlan .= "{$semester}: ";
+            $formattedPlan .= "**{$semester}**: \n"; // Título del semestre en negrita
             $courseNames = [];
-            // Asegurarse de que $courses es iterable y contiene la estructura esperada
             if (is_array($courses)) {
                 foreach ($courses as $course) {
-                    // Verificar si la clave 'asignatura' existe y no es nula
                     if (is_array($course) && isset($course['asignatura']) && $course['asignatura'] !== null) {
-                        $courseNames[] = $course['asignatura'];
-                    } else if (is_string($course)) { // Fallback para entradas de cadena simples si las hay
-                        $courseNames[] = $course;
+                        $courseNames[] = "* " . $course['asignatura']; // Elementos de lista con asterisco
+                    } else if (is_string($course)) {
+                        $courseNames[] = "* " . $course;
                     }
                 }
             }
-            $formattedPlan .= implode(', ', $courseNames) . ".\n";
+            $formattedPlan .= implode("\n", $courseNames) . ".\n\n"; // Unir con saltos de línea
         }
         return $formattedPlan;
     }

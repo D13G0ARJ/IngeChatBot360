@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeSwitchLabel = document.getElementById('themeSwitchLabel');
     const body = document.body;
 
+    // Acceso a los assets de imágenes (asegúrate de que existan en public/images)
+    // Se leen directamente desde los atributos data- del body HTML
+    const userAvatar = body.getAttribute('data-user-avatar');
+    const botAvatar = body.getAttribute('data-bot-avatar');
+
     // Función para aplicar el tema
     function applyTheme(theme) {
         body.setAttribute('data-bs-theme', theme);
@@ -38,6 +43,79 @@ document.addEventListener('DOMContentLoaded', () => {
         const newTheme = themeSwitch.checked ? 'dark' : 'light';
         applyTheme(newTheme);
     });
+
+    /**
+     * Convierte un texto con formato Markdown básico a HTML.
+     * Soporta negritas (**texto**), cursivas (*texto*), saltos de línea y listas con guiones.
+     * @param {string} markdownText - El texto en formato Markdown.
+     * @returns {string} El texto convertido a HTML.
+     */
+    function parseMarkdown(markdownText) {
+        let htmlText = markdownText;
+
+        // Negritas: **texto** -> <strong>texto</strong>
+        htmlText = htmlText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+        // Cursivas: *texto* -> <em>texto</em>
+        // Asegúrate de que no coincida con los asteriscos de negritas ya procesados
+        htmlText = htmlText.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>'); // Fixed regex for italic
+
+        // Saltos de línea: \n -> <br>
+        htmlText = htmlText.replace(/\n/g, '<br>');
+
+        // Listas: - item1<br>- item2 -> <ul><li>item1</li><li>item2</li></ul>
+        // Esto es una simplificación y asume que las listas están al inicio de la línea
+        // y no hay otros contenidos antes de los items de lista.
+        // También, asegúrate de que cada <li> termine su <br> si lo tiene y no se duplique
+        const listRegex = /^- (.*)$/gm; // Match lines starting with '- '
+        let matches = [];
+        let tempText = htmlText;
+        let match;
+        // Reiniciar el índice de la última coincidencia para asegurar que la búsqueda sea global
+        listRegex.lastIndex = 0; 
+        while ((match = listRegex.exec(tempText)) !== null) {
+            matches.push({ text: match[1], index: match.index, fullMatch: match[0] });
+        }
+
+        if (matches.length > 0) {
+            let parts = [];
+            let lastIndex = 0;
+            let inList = false;
+
+            matches.forEach((item, i) => {
+                // Agregar el texto antes de la lista actual
+                if (item.index > lastIndex) {
+                    if (inList) {
+                        parts.push('</ul>');
+                        inList = false;
+                    }
+                    parts.push(tempText.substring(lastIndex, item.index));
+                }
+
+                // Iniciar nueva lista si no estamos en una
+                if (!inList) {
+                    parts.push('<ul>');
+                    inList = true;
+                }
+                // Añadir el ítem de la lista, eliminando <br> internos si los hay
+                parts.push(`<li>${item.text.replace(/<br>/g, '')}</li>`);
+                lastIndex = item.index + item.fullMatch.length;
+            });
+
+            // Cerrar la última lista si quedó abierta
+            if (inList) {
+                parts.push('</ul>');
+            }
+            // Agregar cualquier texto restante después de la última lista
+            if (lastIndex < tempText.length) {
+                parts.push(tempText.substring(lastIndex));
+            }
+            htmlText = parts.join('');
+        }
+
+        return htmlText;
+    }
+
 
     // Función para añadir mensajes al chat
     function addMessage(message, isUser) {
@@ -69,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             messageDiv.appendChild(bubbleContent);
         }
 
-        bubbleContent.innerText = message;
+        bubbleContent.innerHTML = parseMarkdown(message);
         chatDisplay.appendChild(messageDiv);
         chatDisplay.scrollTop = chatDisplay.scrollHeight; // Scroll al final
     }
@@ -96,11 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
         quickReplyButtonsContainer.classList.remove('hidden');
         suggestions.forEach(text => {
             const button = document.createElement('button');
-            button.classList.add('btn', 'btn-primary', 'bg-[var(--secondary-blue)]', 'border-0', 'text-white', 'fw-bold', 'py-2', 'px-3', 'rounded-3', 'transition-colors', 'duration-200', 'fs-6'); // Bootstrap classes
+            button.classList.add('btn', 'btn-primary', 'bg-[var(--secondary-blue)]', 'border-0', 'text-white', 'fw-bold', 'py-2', 'px-3', 'rounded-3', 'transition-colors', 'duration-200', 'fs-6', 'quick-reply-button'); // Added quick-reply-button class
             button.innerText = text;
             button.addEventListener('click', () => {
-                userInput.value = text;
-                sendMessage();
+                // Al hacer clic, enviar el texto del botón directamente a sendMessage
+                sendMessage(text);
             });
             quickReplyButtonsContainer.appendChild(button);
         });
@@ -114,12 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Función para enviar mensaje al backend
-    async function sendMessage() {
-        const message = userInput.value.trim();
+    // Ahora acepta un parámetro 'messageToSend' para permitir el envío desde botones
+    async function sendMessage(messageToSend = null) {
+        const message = messageToSend || userInput.value.trim(); // Usa messageToSend si existe, de lo contrario, el input
         if (!message) return;
 
         addMessage(message, true); // Mostrar mensaje del usuario
-        userInput.value = ''; // Limpiar input
+        userInput.value = ''; // Limpiar input SOLO si no vino de un botón
         userInput.disabled = true; // Deshabilitar input
         sendMessageBtn.disabled = true; // Deshabilitar botón enviar
 
@@ -136,10 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                // Si la respuesta no es OK, intentar leer el cuerpo para más detalles
                 const errorBody = await response.text();
                 console.error('Server responded with an error:', response.status, errorBody);
-                throw new Error(`HTTP error! status: ${response.status}. Details: ${errorBody.substring(0, 200)}...`); // Mostrar un fragmento
+                throw new Error(`HTTP error! status: ${response.status}. Details: ${errorBody.substring(0, 200)}...`);
             }
 
             const data = await response.json();
@@ -148,20 +226,22 @@ document.addEventListener('DOMContentLoaded', () => {
             addMessage(data.bot_response, false); // Mostrar respuesta del bot
 
             // Lógica para mostrar botones de respuesta rápida basados en la respuesta del bot
-            if (data.bot_response.includes("¡Hola! Soy IngeChat 360°")) {
+            if (data.quick_replies && data.quick_replies.length > 0) {
+                addQuickReplyButtons(data.quick_replies);
+            } else if (data.bot_response.includes("¡Hola! Soy IngeChat 360°")) {
                 addQuickReplyButtons(["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"]);
-            } else if (data.bot_response.includes("Ingeniería de Sistemas")) {
-                addQuickReplyButtons(["Pensum de Sistemas", "Perfil del Egresado de Sistemas", "Salidas Profesionales de Sistemas", "Duración de Sistemas"]);
+            } else if (data.bot_response.includes("Ingeniería de Sistemas") && !data.bot_response.includes("plan de estudios")) { // Check for general career info, not pensum
+                addQuickReplyButtons(["Pensum de Sistemas", "Perfil del Egresado de Sistemas", "Salidas Profesionales de Sistemas", "Duración de la carrera de Ingeniería de Sistemas"]);
             }
             // Añade más condiciones para otras carreras o temas específicos
-            else if (data.bot_response.includes("Ingeniería Mecánica")) {
-                addQuickReplyButtons(["Pensum de Mecánica", "Perfil del Egresado de Mecánica"]);
+            else if (data.bot_response.includes("Ingeniería Mecánica") && !data.bot_response.includes("plan de estudios")) {
+                addQuickReplyButtons(["Pensum de Mecánica", "Perfil del Egresado de Mecánica", "Salidas Profesionales de Mecánica", "Duración de la carrera de Ingeniería Mecánica"]);
             }
-            else if (data.bot_response.includes("Ingeniería Eléctrica")) {
-                addQuickReplyButtons(["Pensum de Eléctrica", "Perfil del Egresado de Eléctrica"]);
+            else if (data.bot_response.includes("Ingeniería Eléctrica") && !data.bot_response.includes("plan de estudios")) {
+                addQuickReplyButtons(["Pensum de Eléctrica", "Perfil del Egresado de Eléctrica", "Salidas Profesionales de Eléctrica", "Duración de la carrera de Ingeniería Eléctrica"]);
             }
-            else if (data.bot_response.includes("Ingeniería de Telecomunicaciones")) {
-                addQuickReplyButtons(["Pensum de Telecomunicaciones", "Perfil del Egresado de Telecomunicaciones"]);
+            else if (data.bot_response.includes("Ingeniería en Telecomunicaciones") && !data.bot_response.includes("plan de estudios")) {
+                addQuickReplyButtons(["Pensum de Telecomunicaciones", "Perfil del Egresado de Telecomunicaciones", "Salidas Profesionales de Telecomunicaciones", "Duración de la carrera de Ingeniería en Telecomunicaciones"]);
             }
 
 
@@ -178,8 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función para reiniciar el chat
     async function restartChat() {
-        // IMPORTANTE: Según las instrucciones, evita window.confirm() en iframes.
-        // Para una solución adecuada, implementa un modal de confirmación personalizado en chatbot.blade.php.
         console.warn('Reiniciar chat solicitado. Para una confirmación adecuada, implementa un modal personalizado en chatbot.blade.php.');
         
         // Limpiar el chat visualmente
@@ -202,8 +280,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             console.log(data.message);
             // Mostrar mensaje inicial después de reiniciar
-            addMessage('¡Hola! Soy IngeChat 360°, tu asistente virtual de la UNEFA Núcleo Miranda, Sede Los Teques. Estoy aquí para brindarte información detallada sobre las carreras de Ingeniería: Sistemas, Mecánica, Telecomunicaciones y Eléctrica. ¿En qué carrera estás interesado hoy? O puedes preguntar sobre requisitos de inscripción, perfil del egresado, etc.', false);
-            addQuickReplyButtons(["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"]);
+            addMessage(data.bot_response, false); // Usa la respuesta del bot para el mensaje inicial
+            // Si la respuesta de reinicio tiene quick_replies, úsalos
+            if (data.quick_replies && data.quick_replies.length > 0) {
+                addQuickReplyButtons(data.quick_replies);
+            } else {
+                // De lo contrario, usa los botones por defecto
+                addQuickReplyButtons(["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"]);
+            }
 
         } catch (error) {
             console.error('Error al reiniciar chat:', error);
@@ -214,14 +298,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event Listeners
-    sendMessageBtn.addEventListener('click', sendMessage);
+    sendMessageBtn.addEventListener('click', () => sendMessage()); // Llama a sendMessage sin parámetros
     userInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            sendMessage();
+            sendMessage(); // Llama a sendMessage sin parámetros
         }
     });
     restartChatBtn.addEventListener('click', restartChat);
 
-    // Mostrar botones iniciales
-    addQuickReplyButtons(["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"]);
+    // Mostrar botones iniciales al cargar la página
+    // Llamar a restartChat para que el backend inicie una nueva sesión y envíe el mensaje inicial con botones.
+    // Esto asegura que la lógica del backend se sincronice con el frontend desde el principio.
+    restartChat(); 
 });

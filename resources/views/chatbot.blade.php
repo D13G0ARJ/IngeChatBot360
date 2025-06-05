@@ -23,7 +23,6 @@
             --bubble-user-light: #DCF8C6;
             --bubble-bot-light: #E0E0E0;
             --avatar-size: 40px; /* Tamaño de avatar */
-            --chat-background-image: url('{{ asset('images/fondo_chat.png') }}'); /* Ruta de la imagen de fondo del chat */
         }
         /* Colores para el modo oscuro */
         [data-bs-theme="dark"] {
@@ -31,97 +30,93 @@
             --secondary-blue: #4169E1; /* Mantener fijo para branding */
             --accent-blue-light: #6495ED; /* Mantener fijo para branding */
             --white-color: #FFFFFF; /* Mantener fijo para texto en fondos oscuros */
-            --light-gray-bg: #2B2B2B; /* Fondo general oscuro del body */
-            --chat-bg-color: #1A1A1A; /* Fondo de chat oscuro (negro) para burbujas, input y header */
-            --chat-area-bg-color: #2B2B2B; /* Fondo gris oscuro para el área de chat y botones rápidos (no usado si hay imagen de fondo) */
+            --light-gray-bg: #2B2B2B; /* Fondo general oscuro */
+            --chat-bg-color: #343638; /* Fondo de chat oscuro */
             --text-color-dark: #FFFFFF; /* Texto blanco en fondos oscuros */
             --border-color-subtle: #555555; /* Borde sutil oscuro */
             --bubble-user-light: #004D40; /* Verde oscuro para usuario */
             --bubble-bot-light: #424242; /* Gris oscuro para bot */
-            --chat-background-image: url('{{ asset('images/fondo_chat.png') }}'); /* Ruta de la imagen de fondo del chat en modo oscuro */
         }
 
         body {
-            font-family: 'Inter', sans-serif; /* Fuente moderna */
+            font-family: 'Inter', sans-serif; /* O la fuente que prefieras */
             background-color: var(--light-gray-bg);
             transition: background-color 0.3s ease; /* Transición suave para el fondo del body */
-            min-height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
-            display: flex; /* Usar flexbox para centrar el contenedor principal */
-            align-items: center; /* Centrar verticalmente */
-            justify-content: center; /* Centrar horizontalmente */
-            padding: 1rem; /* Padding general para el body */
         }
 
-        /* Contenedor principal del chat */
-        .chat-container {
-            background-color: var(--white-color);
-            border-radius: 1.5rem; /* Bordes más redondeados */
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
-            width: 100%;
-            max-width: 600px; /* Ancho máximo para pantallas grandes */
-            height: 90vh; /* Altura fija para pantallas grandes */
+        /* Estilos generales para el contenedor principal de la aplicación */
+        .app-container {
             display: flex;
             flex-direction: column;
-            transition: background-color 0.3s ease;
+            background-color: var(--chat-bg-color); /* Usar el color de fondo de chat para el contenedor principal */
+            border-radius: 1rem; /* 16px */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+            width: 100%;
+            max-width: 600px;
+            height: 90vh; /* Ocupa el 90% de la altura del viewport */
         }
 
-        /* Media queries para responsividad */
-        @media (max-width: 768px) {
-            .chat-container {
-                height: 98vh; /* Ocupa casi toda la altura en móviles */
-                max-width: 95%; /* Ocupa casi todo el ancho en móviles */
-                border-radius: 1rem; /* Bordes ligeramente menos redondeados en móvil */
-            }
-            .message-bubble {
-                max-width: 85%; /* Las burbujas pueden ser un poco más anchas en móvil */
-            }
-            .quick-reply-button {
-                font-size: 0.9rem !important; /* Fuente más pequeña para botones de respuesta rápida */
-                padding: 0.6rem 0.9rem !important;
-            }
-            .form-control {
-                font-size: 1rem !important; /* Ajuste del tamaño de fuente del input */
-            }
-            .header-title {
-                font-size: 1.5rem !important; /* Ajuste del tamaño de fuente del título */
-            }
-            /* Ocultar el banner interno en pantallas pequeñas si molesta */
-            .ingechat-logo-overlay {
-                display: none;
-            }
+        /* Estilos para el encabezado del chat */
+        .chat-header {
+            background-color: var(--primary-blue);
+            padding: 0.75rem; /* p-3 */
+            border-top-left-radius: 1rem; /* rounded-t-xl */
+            border-top-right-radius: 1rem; /* rounded-t-xl */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
+        /* Estilos para el área de visualización del chat */
+        .chat-display-area {
+            flex-grow: 1;
+            padding: 1rem; /* p-4 */
+            overflow-y: auto; /* overflow-auto */
+            background-color: var(--chat-area-bg-color); /* Usar el color de fondo para el área de chat */
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem; /* gap-3 */
+        }
+
+        /* Estilos para burbujas de chat */
         .chat-bubble {
-            opacity: 0;
-            transform: translateX(var(--initial-slide-x, 180px));
-            animation: slideIn 0.5s ease-out forwards;
-            border-radius: 0.75rem; /* Bordes redondeados para las burbujas */
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Sombra sutil para las burbujas */
+            display: flex;
+            margin-bottom: 0.75rem; /* mb-3 */
+            align-items: flex-start; /* Asegura que el avatar esté alineado con la parte superior de la burbuja */
         }
 
-        .chat-bubble.bot {
-            --initial-slide-x: -180px;
+        .message-bubble {
+            padding: 0.75rem; /* p-3 */
+            border-radius: 0.75rem; /* rounded-xl */
+            max-width: 75%; /* max-w-3/4 */
+            word-wrap: break-word;
         }
 
-        @keyframes slideIn {
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .message-bubble.user {
+            background-color: var(--bubble-user-light);
+            color: var(--text-color-dark);
+            margin-left: auto; /* D-flex justify-content-end */
         }
+
+        .message-bubble.bot {
+            background-color: var(--bubble-bot-light);
+            color: var(--text-color-dark);
+            margin-right: auto; /* D-flex justify-content-start */
+        }
+
+        /* Estilos para avatares */
+        .avatar {
+            width: var(--avatar-size);
+            height: var(--avatar-size);
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0; /* Evita que el avatar se encoja */
+        }
+
+        .avatar.user { margin-left: 0.75rem; /* ms-3 */ }
+        .avatar.bot { margin-right: 0.75rem; /* me-3 */ }
 
         /* Estilos para el indicador de escritura */
-        .typing-indicator {
-            margin-top: 0.75rem; /* Espacio entre el último mensaje y el indicador */
-            padding: 0.75rem 1rem; /* Padding similar a las burbujas */
-            border-radius: 0.75rem; /* Bordes redondeados */
-            background-color: var(--bubble-bot-light); /* Color de fondo del indicador */
-            color: var(--text-color-dark); /* Color del texto del indicador */
-            font-style: italic;
-            font-size: 0.9rem;
-            align-self: flex-start; /* Alinea a la izquierda */
-            max-width: 75%; /* Ancho máximo */
-        }
         .typing-indicator span {
             opacity: 0.2;
             animation: blink 1.4s infinite;
@@ -134,129 +129,131 @@
             50% { opacity: 1; }
         }
 
-        /* Estilos para avatares */
-        .avatar {
-            width: var(--avatar-size);
-            height: var(--avatar-size);
-            border-radius: 50%;
-            object-fit: cover;
-            flex-shrink: 0; /* Evita que el avatar se encoja */
+        .typing-indicator.hidden { display: none !important; }
+
+        /* Estilos para el área de botones rápidos */
+        .quick-reply-buttons-area {
+            padding: 0.75rem; /* p-3 */
+            background-color: var(--chat-bg-color);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 0.5rem; /* gap-2 */
+            border-top: 1px solid var(--border-color-subtle);
         }
 
-        /* Estilos para burbujas de chat */
-        .message-bubble {
-            padding: 0.75rem 1rem; /* Más padding */
-            border-radius: 0.75rem; /* Bordes más redondeados */
-            max-width: 75%; /* Ajuste para responsividad */
-            word-wrap: break-word;
-            line-height: 1.4; /* Espaciado de línea para mejor legibilidad */
-            color: var(--text-color-dark); /* Asegura que el texto sea oscuro */
-        }
-
-        .message-bubble.user {
-            background-color: var(--bubble-user-light);
-            margin-left: auto; /* Empuja la burbuja del usuario a la derecha */
-        }
-
-        .message-bubble.bot {
-            background-color: var(--bubble-bot-light);
-            margin-right: auto; /* Empuja la burbuja del bot a la izquierda */
-        }
-
-        /* Asegurar que el indicador de escritura esté oculto por defecto */
-        .typing-indicator.hidden {
-            display: none !important;
-        }
-
-        /* Estilos para los botones de respuesta rápida */
+        /* Estilos para los botones rápidos */
         .quick-reply-button {
-            padding: 0.75rem 1.25rem !important; /* Más padding */
-            border-radius: 9999px !important; /* Completamente redondeado */
-            font-size: 1rem !important;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .quick-reply-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            background-color: var(--secondary-blue);
+            border: none;
+            color: var(--white-color);
+            font-weight: bold;
+            padding: 0.5rem 0.75rem; /* py-2 px-3 */
+            border-radius: 0.75rem; /* rounded-3 */
+            transition-property: background-color;
+            transition-duration: 200ms;
+            font-size: 1rem; /* fs-6 */
         }
 
-        /* Estilos para el input de usuario */
-        .user-input-field {
-            border-radius: 9999px; /* Bordes redondeados */
-            padding: 0.75rem 1.25rem; /* Más padding */
-            border: 1px solid var(--border-color-subtle);
-            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        .quick-reply-button:hover {
+            background-color: var(--primary-blue);
         }
+
+        /* Estilos para el área de entrada del usuario */
+        .user-input-area {
+            padding: 0.75rem; /* p-3 */
+            background-color: var(--chat-bg-color);
+            border-top: 1px solid var(--border-color-subtle);
+            display: flex;
+            align-items: center;
+            border-bottom-left-radius: 1rem; /* rounded-b-xl */
+            border-bottom-right-radius: 1rem; /* rounded-b-xl */
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+        }
+
+        /* Estilos para el campo de entrada de texto */
+        .user-input-field {
+            flex-grow: 1; /* flex-grow-1 */
+            margin-right: 0.75rem; /* me-3 */
+            font-size: 1.1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color-subtle);
+            background-color: var(--light-gray-bg);
+            color: var(--text-color-dark);
+        }
+
         .user-input-field:focus {
             border-color: var(--secondary-blue);
-            box-shadow: 0 0 0 0.2rem rgba(65, 105, 225, 0.25); /* Sombra de foco */
+            box-shadow: 0 0 0 0.2rem rgba(65, 105, 225, 0.25); /* Bootstrap focus-ring like */
+            outline: none;
         }
-
-        /* Estilo para el botón de enviar */
+        
+        /* Estilos para el botón de enviar */
         .send-button {
-            border-radius: 9999px !important; /* Completamente redondeado */
-            padding: 0.85rem !important; /* Ajuste para el tamaño del icono */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s ease-in-out;
+            background-color: var(--secondary-blue);
+            border: none;
+            color: var(--white-color);
+            padding: 0.75rem; /* p-3 */
+            border-radius: 0.75rem; /* rounded-3 */
+            transition-property: background-color;
+            transition-duration: 200ms;
         }
+
         .send-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            background-color: var(--primary-blue);
+        }
+        
+        /* Estilos de transición para el cambio de tema */
+        html[data-bs-theme="light"] body, html[data-bs-theme="dark"] body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        html[data-bs-theme="light"] .app-container, html[data-bs-theme="dark"] .app-container {
+            transition: background-color 0.3s ease;
+        }
+        html[data-bs-theme="light"] .message-bubble.bot, html[data-bs-theme="dark"] .message-bubble.bot {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        html[data-bs-theme="light"] .message-bubble.user, html[data-bs-theme="dark"] .message-bubble.user {
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Estilo para el área de visualización del chat con imagen de fondo */
-        #chat-display {
-            background-image: var(--chat-background-image);
-            background-size: cover; /* La imagen cubrirá todo el área */
-            background-position: center; /* Centra la imagen */
-            background-repeat: no-repeat; /* Evita que la imagen se repita */
-            background-color: transparent !important; /* Asegura que el color de fondo no oculte la imagen */
-            position: relative; /* Necesario para posicionar el banner interno */
+        /* Animación de entrada de burbujas */
+        .chat-bubble {
+            opacity: 0;
+            transform: translateX(var(--initial-slide-x, 100px)); /* Distancia inicial */
+            animation: slideIn 0.3s ease-out forwards; /* Duración y curva de animación */
+            /* Evitar que el transform afecte el layout antes de que la animación comience */
+            will-change: transform, opacity;
         }
 
-        /* Estilo para el contenedor de botones de respuesta rápida con imagen de fondo */
-        #quick-reply-buttons {
-            background-image: var(--chat-background-image); /* Usa la misma imagen de fondo */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-color: transparent !important; /* Asegura que el color de fondo no oculte la imagen */
+        .chat-bubble.bot {
+            --initial-slide-x: -100px; /* Deslizamiento desde la izquierda para el bot */
         }
 
-        /* Estilos para el banner interno flotante */
-        .ingechat-logo-overlay {
-            position: absolute;
-            bottom: 1rem; /* Ajusta la distancia desde abajo */
-            right: 1rem; /* Ajusta la distancia desde la derecha */
-            width: 100px; /* Tamaño del logo */
-            height: auto;
-            opacity: 0.6; /* Hazlo semitransparente para que no interfiera con el texto */
-            z-index: -1; /* Asegura que esté detrás de las burbujas de chat */
-        }
-        /* Ajustar el tamaño del overlay en pantallas más grandes si es necesario */
-        @media (min-width: 768px) {
-            .ingechat-logo-overlay {
-                width: 150px; /* Un poco más grande en tablet/desktop */
-                bottom: 2rem;
-                right: 2rem;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(var(--initial-slide-x, 100px));
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
             }
         }
     </style>
 </head>
-<body>
-    <div class="chat-container">
+<body class="d-flex align-items-center justify-content-center min-vh-100 p-4" data-bs-theme="light"
+      data-user-avatar="{{ asset('images/user_avatar.png') }}"
+      data-bot-avatar="{{ asset('images/bot_avatar.png') }}">
+    <div class="app-container">
         <!-- Header -->
-        <div class="bg-[var(--primary-blue)] p-4 rounded-t-xl shadow-md d-flex align-items-center justify-content-between">
-            <img src="{{ asset('images/logo_unefa.png') }}" alt="Logo UNEFA" class="me-3" style="height: 90px; width: 70; max-width: 140px; object-fit: contain;">
-            {{-- Añadido el texto "UNEFA" junto al logo --}}
-            <h1 class="text-[var(--text-color-dark)] fs-4 fw-bold flex-grow-1 header-title">
-                <span style="color: var(--text-color-dark); margin-right: 0.5rem; font-size: 1.2em;">UNEFA</span> IngeChat 360°
-            </h1>
+        <div class="chat-header">
+            {{-- Ajuste del logo: height fijo, width auto para mantener proporción, y max-width para control --}}
+            <img src="{{ asset('images/logo_unefa.png') }}" alt="Logo UNEFA" class="me-3" style="height: 40px; width: auto; max-width: 120px; object-fit: contain;">
+            <h1 class="text-white fs-4 fw-bold flex-grow-1">IngeChat 360°</h1>
             
-            <div class="d-flex align-items-end gap-3">
-                <!-- Texto "Tema" -->
-                <span class="text-white me-2">Tema</span>
+            <div class="d-flex align-items-center gap-3">
                 <!-- Selector de Tema (Bootstrap Switch) -->
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="themeSwitch">
@@ -264,26 +261,19 @@
                 </div>
 
                 <!-- Botón Reiniciar Chat -->
-                <button id="restart-chat-btn" class="btn btn-primary bg-[var(--accent-blue-light)] border-0 text-white fw-bold py-2 px-4 rounded-lg transition-colors duration-200 quick-reply-button">
+                <button id="restart-chat-btn" class="btn btn-primary bg-[var(--accent-blue-light)] border-0 text-white fw-bold py-2 px-4 rounded-3 transition-colors duration-200">
                     Reiniciar Chat
                 </button>
             </div>
         </div>
 
         <!-- Chat Display Area -->
-        <div id="chat-display" class="flex-grow-1 p-4 overflow-auto d-flex flex-column gap-3 rounded-b-lg">
-            <!-- Banner interno flotante -->
-            <img src="{{ asset('images/ingechat-logo.png') }}" alt="IngeChat Logo Overlay" class="ingechat-logo-overlay">
-
+        <div id="chat-display" class="chat-display-area">
             <!-- Mensajes del chat se añadirán aquí -->
-            <div class="d-flex align-items-start chat-bubble bot">
-                <img src="{{ asset('images/bot_avatar.png') }}" alt="Bot Avatar" class="avatar me-3">
-                <div class="message-bubble bot">
-                    ¡Hola! Soy IngeChat 360°, tu asistente virtual de la UNEFA Núcleo Miranda, Sede Los Teques. Estoy aquí para brindarte información detallada sobre las carreras de Ingeniería: Sistemas, Mecánica, Telecomunicaciones y Eléctrica. ¿En qué carrera estás interesado hoy? O puedes preguntar sobre requisitos de inscripción, perfil del egresado, etc.
-                </div>
-            </div>
+            {{-- El mensaje inicial ahora se añade por JavaScript para consistencia --}}
 
-            <!-- Indicador de "Escribiendo..." (Ahora dentro de chat-display y al final) -->
+            <!-- Indicador de "Escribiendo..." -->
+            {{-- Asegurarse de que esté oculto por defecto con la clase 'hidden' --}}
             <div id="typing-indicator" class="d-flex align-items-center typing-indicator hidden">
                 <img src="{{ asset('images/bot_avatar.png') }}" alt="Bot Avatar" class="avatar me-3">
                 <div class="bg-light text-muted fst-italic fs-6 message-bubble">
@@ -293,24 +283,19 @@
         </div>
 
         <!-- Quick Reply Buttons Area -->
-        <div id="quick-reply-buttons" class="p-3 d-flex flex-wrap justify-content-start gap-2 hidden border-top border-[var(--border-color-subtle)]">
+        <div id="quick-reply-buttons" class="quick-reply-buttons-area hidden">
             <!-- Botones de respuesta rápida se añadirán aquí dinámicamente -->
         </div>
 
         <!-- User Input Area -->
-        <div class="p-3 bg-[var(--chat-bg-color)] border-top border-[var(--border-color-subtle)] d-flex align-items-center rounded-b-xl shadow-md">
+        <div class="user-input-area">
             <input type="text" id="user-input" placeholder="Escribe tu mensaje..."
-                   class="form-control me-3 user-input-field">
-            <button id="send-message-btn" class="btn btn-primary bg-[var(--secondary-blue)] border-0 text-white send-button">
+                   class="form-control user-input-field">
+            {{-- Ajuste del botón de enviar: Aumentado el tamaño del SVG --}}
+            <button id="send-message-btn" class="btn btn-primary send-button">
                 <svg width="28" height="28" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.409l-7-14z"></path></svg>
             </button>
         </div>
     </div>
-
-    <script>
-        // Acceso a los assets de imágenes (asegúrate de que existan en public/images)
-        const userAvatar = "{{ asset('images/user_avatar.png') }}";
-        const botAvatar = "{{ asset('images/bot_avatar.png') }}";
-    </script>
 </body>
 </html>

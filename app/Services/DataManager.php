@@ -35,11 +35,13 @@ class DataManager
                 Log::error('DataManager: Directorio de carreras NO encontrado: ' . $carrerasPath);
             }
 
-            // Cargar FAQs
+            // Cargar FAQs - CORRECCIÓN AQUÍ
             $faqsPath = storage_path('app/data/faqs.json');
             if (File::exists($faqsPath)) {
-                $this->data['faqs'] = json_decode(File::get($faqsPath), true);
-                Log::info("DataManager: Cargadas FAQs generales desde: {$faqsPath}.");
+                $decodedFaqs = json_decode(File::get($faqsPath), true);
+                // Acceder específicamente al array dentro de la clave 'preguntas_frecuentes'
+                $this->data['faqs'] = $decodedFaqs['preguntas_frecuentes'] ?? [];
+                Log::info("DataManager: Cargadas FAQs generales.");
             } else {
                 Log::error('DataManager: Archivo de FAQs NO encontrado: ' . $faqsPath);
             }
@@ -48,18 +50,18 @@ class DataManager
             $unefaInfoPath = storage_path('app/data/unefa_info.json');
             if (File::exists($unefaInfoPath)) {
                 $this->data['unefa_info'] = json_decode(File::get($unefaInfoPath), true);
-                Log::info("DataManager: Cargada información general de la UNEFA desde: {$unefaInfoPath}.");
+                Log::info("DataManager: Cargada información general de la UNEFA.");
             } else {
-                Log::error('DataManager: Archivo de información de UNEFA NO encontrado: ' . $unefaInfoPath);
+                Log::warning('DataManager: Archivo de información de UNEFA NO encontrado: ' . $unefaInfoPath);
             }
 
             // Cargar training_data (si lo usas para few-shot learning)
             $trainingDataPath = storage_path('app/data/training_data.json');
             if (File::exists($trainingDataPath)) {
                 $this->data['training_data'] = json_decode(File::get($trainingDataPath), true);
-                Log::info("DataManager: Cargada información de entrenamiento desde: {$trainingDataPath}.");
+                Log::info("DataManager: Cargada información de entrenamiento.");
             } else {
-                Log::warning('DataManager: Archivo de entrenamiento (training_data.json) NO encontrado: ' . $trainingDataPath . '. Si no lo usas, puedes ignorar esta advertencia.');
+                Log::warning('DataManager: Archivo de datos de entrenamiento NO encontrado: ' . $trainingDataPath . '. Si no lo usas, puedes ignorar esta advertencia.');
             }
 
             Log::info('DataManager: Carga de datos finalizada.');
@@ -78,13 +80,15 @@ class DataManager
     {
         foreach (($this->data['faqs'] ?? []) as $faq) {
             // Asegurarse de que $faq es un array y que las claves 'pregunta' y 'respuesta' existen
+            // Con la corrección en loadData, $faq ahora será un array individual de FAQ
             if (is_array($faq) && isset($faq['pregunta']) && isset($faq['respuesta'])) {
                 if (stripos($faq['pregunta'], $question) !== false) {
                     return $faq['respuesta'];
                 }
             } else {
-                // Opcional: Loggear si una entrada de FAQ tiene un formato inesperado
-                Log::warning('DataManager: Entrada de FAQ con formato inesperado encontrada: ' . json_encode($faq));
+                // Este log solo debería activarse si una entrada individual está mal formada,
+                // no por la estructura general del JSON.
+                Log::warning('DataManager: Entrada de FAQ con formato inesperado encontrada (después de corrección): ' . json_encode($faq));
             }
         }
         return null;
