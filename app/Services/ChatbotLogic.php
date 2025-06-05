@@ -293,8 +293,7 @@ class ChatbotLogic
             }
             else {
                 // Palabras clave para determinar si la pregunta es del contexto UNEFA/carreras
-                $contextKeywords = [
-                    'unefa', 'ingenier', 'carrera', 'sede', 'núcleo', 'nucleo', 'inscrip', 'inscripción', 'preinscripción', 'preinscrip',
+                $contextKeywords = ['unefa', 'ingenieria', 'carrera', 'sede', 'núcleo', 'nucleo', 'inscrip', 'inscripción', 'preinscripción', 'preinscrip',
                     'egresado', 'pensum', 'plan de estudio', 'plan curricular', 'perfil', 'salidas profesionales', 'campo laboral',
                     'mision', 'misión', 'vision', 'visión', 'ubicacion', 'ubicación', 'dirección', 'direccion', 'contacto', 'teléfono',
                     'telefono', 'correo', 'email', 'correo institucional', 'los teques', 'miranda', 'universidad', 'estudios', 'materias',
@@ -310,8 +309,9 @@ class ChatbotLogic
                     'computacion', 'tecnología', 'tecnologia', 'ingeniería', 'ingenieria', 'universitario', 'universitaria', 'postgrado',
                     'maestría', 'maestria', 'doctorado', 'pregrado', 'pre-universitario', 'preuniversitario', 'becario', 'becarios',
                     'asistente académico', 'asistente academico', 'departamento', 'decanato', 'rectorado', 'autoridad', 'autoridades',
-                    'reglamento', 'normativa', 'calendario académico', 'calendario academico', 'evento', 'eventos', 'actividad', 'actividades','ecuacion','resolver','ejercicio'
-                ];
+                    'reglamento', 'normativa', 'calendario académico', 'calendario academico', 'evento', 'eventos', 'actividad', 'actividades',
+                    'ecuacion','resolver','ejercicio', 'algoritmo', 'telecomunicaciones', 'sistemas de información', 'sistemas informáticos', 'ingeniería industrial', 'ingeniería civil'
+            ];
                 $isContextual = false;
                 foreach ($contextKeywords as $keyword) {
                     if (str_contains($userMessageLower, $keyword)) {
