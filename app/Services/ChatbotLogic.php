@@ -292,13 +292,43 @@ class ChatbotLogic
                 $quickReplies = ["Ingeniería de Sistemas", "Ingeniería Mecánica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Requisitos de Inscripción"];
             }
             else {
-                Log::info('ChatbotLogic: No local match found. Consulting Gemini API.');
-                // Prioridad 3: Si no hay respuesta local, usar Gemini
-                // Añadimos el mensaje del usuario al historial para Gemini
-                $this->chatHistory[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
-                $geminiResponse = $this->geminiApi->generateContent($this->chatHistory);
-                $response = $geminiResponse;
-                // No hay quick replies por defecto si la respuesta viene de Gemini y no es contextual
+                // Palabras clave para determinar si la pregunta es del contexto UNEFA/carreras
+                $contextKeywords = [
+                    'unefa', 'ingenier', 'carrera', 'sede', 'núcleo', 'nucleo', 'inscrip', 'inscripción', 'preinscripción', 'preinscrip',
+                    'egresado', 'pensum', 'plan de estudio', 'plan curricular', 'perfil', 'salidas profesionales', 'campo laboral',
+                    'mision', 'misión', 'vision', 'visión', 'ubicacion', 'ubicación', 'dirección', 'direccion', 'contacto', 'teléfono',
+                    'telefono', 'correo', 'email', 'correo institucional', 'los teques', 'miranda', 'universidad', 'estudios', 'materias',
+                    'asignaturas', 'semestre', 'trimestre', 'trayecto', 'docente', 'profesor', 'clases', 'horario', 'turno', 'diurno',
+                    'nocturno', 'modalidad', 'presencial', 'virtual', 'beca', 'becas', 'arancel', 'aranceles', 'pago', 'pagos',
+                    'inscripción en línea', 'registro', 'reingreso', 'traslado', 'equivalencia', 'título', 'titulo', 'graduación',
+                    'graduacion', 'nota', 'notas', 'calificación', 'calificacion', 'evaluación', 'evaluacion', 'requisito', 'requisitos',
+                    'documento', 'documentos', 'proceso', 'admisión', 'admision', 'postulación', 'postulacion', 'cupos', 'cupos disponibles',
+                    'oferta académica', 'oferta academica', 'servicio comunitario', 'pasantía', 'pasantias', 'laboratorio', 'laboratorios',
+                    'biblioteca', 'investigación', 'investigacion', 'consejo', 'coordinación', 'coordinacion', 'secretaría', 'secretaria',
+                    'estudiante', 'alumno', 'egreso', 'ingreso', 'nuevo ingreso', 'reingreso', 'sistema', 'mecánica', 'mecanica',
+                    'telecomunicaciones', 'eléctrica', 'electrica', 'sistemas', 'mecatronica', 'civil', 'industrial', 'computación',
+                    'computacion', 'tecnología', 'tecnologia', 'ingeniería', 'ingenieria', 'universitario', 'universitaria', 'postgrado',
+                    'maestría', 'maestria', 'doctorado', 'pregrado', 'pre-universitario', 'preuniversitario', 'becario', 'becarios',
+                    'asistente académico', 'asistente academico', 'departamento', 'decanato', 'rectorado', 'autoridad', 'autoridades',
+                    'reglamento', 'normativa', 'calendario académico', 'calendario academico', 'evento', 'eventos', 'actividad', 'actividades','ecuacion','resolver','ejercicio'
+                ];
+                $isContextual = false;
+                foreach ($contextKeywords as $keyword) {
+                    if (str_contains($userMessageLower, $keyword)) {
+                        $isContextual = true;
+                        break;
+                    }
+                }
+                if ($isContextual) {
+                    Log::info('ChatbotLogic: No local match found, but message is contextual. Consulting Gemini API.');
+                    $this->chatHistory[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
+                    $geminiResponse = $this->geminiApi->generateContent($this->chatHistory);
+                    $response = $geminiResponse;
+                } else {
+                    Log::info('ChatbotLogic: No local match found and message is out of scope. Responding with out-of-scope message.');
+                    $response = "Lo siento, solo puedo responder preguntas relacionadas con las carreras de Ingeniería de la UNEFA Núcleo Miranda, Sede Los Teques, o información institucional de la UNEFA.";
+                }
+                // No hay quick replies por defecto si la respuesta es fuera de contexto o viene de Gemini
             }
         }
 

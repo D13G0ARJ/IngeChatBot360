@@ -248,13 +248,13 @@
     <div class="chat-container">
         <!-- Header -->
         <div class="bg-[var(--primary-blue)] p-4 rounded-t-xl shadow-md d-flex align-items-center justify-content-between">
-            <img src="{{ asset('images/logo_unefa.png') }}" alt="Logo UNEFA" class="me-3" style="height: 45px; width: auto; max-width: 140px; object-fit: contain;">
+            <img src="{{ asset('images/logo_unefa.png') }}" alt="Logo UNEFA" class="me-3" style="height: 90px; width: 70; max-width: 140px; object-fit: contain;">
             {{-- Añadido el texto "UNEFA" junto al logo --}}
             <h1 class="text-[var(--text-color-dark)] fs-4 fw-bold flex-grow-1 header-title">
                 <span style="color: var(--text-color-dark); margin-right: 0.5rem; font-size: 1.2em;">UNEFA</span> IngeChat 360°
             </h1>
             
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-end gap-3">
                 <!-- Texto "Tema" -->
                 <span class="text-white me-2">Tema</span>
                 <!-- Selector de Tema (Bootstrap Switch) -->
