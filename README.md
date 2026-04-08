@@ -145,7 +145,7 @@ Luego abre `http://localhost:3000`.
 
 ### Cómo se conecta con la IA
 
-La UI web llama a `POST /api/chat` (Vercel Function en Python) con un JSON como:
+La UI web llama a `POST /api/chat` (API Route de Next.js) con un JSON como:
 
 ```json
 {
@@ -156,17 +156,17 @@ La UI web llama a `POST /api/chat` (Vercel Function en Python) con un JSON como:
 
 ## ▲ Despliegue en Vercel
 
-Este proyecto original es una app de escritorio (CustomTkinter). Vercel no puede ejecutar una GUI de escritorio, así que para desplegarlo se agregó una **API serverless**.
+Este proyecto original es una app de escritorio (CustomTkinter). Vercel no puede ejecutar una GUI de escritorio, así que para desplegarlo se agregó una **UI web (Next.js/React)** y un endpoint de chat en `/api/chat`.
 
-### Endpoints
+### Endpoint
 
-- `GET /api` → estado y ayuda
-- `POST /api/chat` → responde usando la lógica híbrida (datos locales + Gemini)
+- `GET /api/chat` → estado y ejemplo
+- `POST /api/chat` → responde usando datos locales + Gemini
 
 Body ejemplo:
 
 ```json
-{ "message": "¿Qué es Ingeniería de Sistemas?" }
+{ "message": "¿Qué es Ingeniería de Sistemas?", "history": [] }
 ```
 
 ### Configuración en Vercel
@@ -174,6 +174,7 @@ Body ejemplo:
 1. Importa el repositorio en Vercel.
 2. En **Project Settings → Environment Variables**, agrega:
     - `GEMINI_API_KEY` = tu clave
+   - (Opcional) `GEMINI_MODEL` = `models/gemini-flash-latest`
 3. Deploy.
 
 ### Probar en producción
@@ -181,7 +182,7 @@ Body ejemplo:
 ```bash
 curl -X POST https://<tu-app>.vercel.app/api/chat \
    -H "Content-Type: application/json" \
-   -d "{\"message\":\"Hola\"}"
+   -d "{\"message\":\"Hola\",\"history\":[] }"
 ```
 
 

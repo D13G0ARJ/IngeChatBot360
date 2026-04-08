@@ -51,8 +51,6 @@ function getSuggestionsFromBotText(botText) {
   return [];
 }
 
-const API_BASE = typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL : '';
-
 export default function Page() {
   const [theme, setTheme] = useState('light');
   const [messages, setMessages] = useState(() => [
@@ -114,7 +112,7 @@ export default function Page() {
       .map((m) => ({ role: m.role, content: m.content }));
 
     try {
-      const res = await fetch(`${API_BASE || ''}/api/chat`, {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, history }),
