@@ -4,6 +4,11 @@ import json
 from http.server import BaseHTTPRequestHandler
 
 from src.core.chatbot_logic import ChatbotLogic
+from src.core.data_manager import DataManager
+
+
+_DATA_MANAGER = DataManager()
+_LOGIC = ChatbotLogic(data_manager=_DATA_MANAGER)
 
 
 class handler(BaseHTTPRequestHandler):
@@ -11,6 +16,10 @@ class handler(BaseHTTPRequestHandler):
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        # CORS headers for browser-based clients
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
@@ -34,9 +43,15 @@ class handler(BaseHTTPRequestHandler):
             self._send_json({"error": "Missing 'message'"}, status=400)
             return
 
+        history = payload.get("history")
+        if history is None:
+            history = []
+        if not isinstance(history, list):
+            self._send_json({"error": "'history' must be a list"}, status=400)
+            return
+
         try:
-            logic = ChatbotLogic()
-            reply = logic.process_message(message)
+            reply = _LOGIC.process_message(message, history=history)
         except ValueError as e:
             # e.g. missing GEMINI_API_KEY
             self._send_json({"error": str(e)}, status=500)
@@ -56,3 +71,11 @@ class handler(BaseHTTPRequestHandler):
                 },
             }
         )
+
+    def do_OPTIONS(self) -> None:
+        # Respond to CORS preflight
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()

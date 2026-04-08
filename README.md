@@ -130,6 +130,30 @@ Proporciona una experiencia de usuario moderna y responsive con CustomTkinter. [
 
 python src/main.py
 
+## 🌐 UI Web (React / Next.js)
+
+Se agregó una UI web profesional construida con **Next.js (React)**.
+
+### Ejecutar en local (web)
+
+```bash
+npm install
+npm run dev
+```
+
+Luego abre `http://localhost:3000`.
+
+### Cómo se conecta con la IA
+
+La UI web llama a `POST /api/chat` (Vercel Function en Python) con un JSON como:
+
+```json
+{
+   "message": "Hola",
+   "history": [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]
+}
+```
+
 ## ▲ Despliegue en Vercel
 
 Este proyecto original es una app de escritorio (CustomTkinter). Vercel no puede ejecutar una GUI de escritorio, así que para desplegarlo se agregó una **API serverless**.

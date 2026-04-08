@@ -3,3 +3,18 @@ venv/
 
 # Ignorar el archivo de variables de entorno
 .env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# npm lockfile (optional)
+package-lock.json
+
+# Vercel
+.vercel/

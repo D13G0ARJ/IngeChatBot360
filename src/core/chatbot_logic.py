@@ -8,12 +8,22 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class ChatbotLogic:
-    def __init__(self):
-        self.data_manager = DataManager()
-        self.gemini_api = GeminiAPI(GEMINI_API_KEY)
+    def __init__(self, api_key: str | None = None, data_manager: DataManager | None = None):
+        self.data_manager = data_manager or DataManager()
+        self._api_key = api_key or GEMINI_API_KEY
+        self.gemini_api: GeminiAPI | None = None
         self.career_keywords = ["sistemas", "mecanica", "telecomunicaciones", "electrica"]
 
-    def process_message(self, message: str) -> str:
+    def _ensure_gemini(self) -> GeminiAPI:
+        if self.gemini_api is None:
+            if not self._api_key:
+                raise ValueError(
+                    "GEMINI_API_KEY no está configurada. Configúrala como variable de entorno o en un archivo .env"
+                )
+            self.gemini_api = GeminiAPI(self._api_key)
+        return self.gemini_api
+
+    def process_message(self, message: str, history: list[dict] | None = None) -> str:
         """
         Procesa el mensaje del usuario y devuelve una respuesta.
         Prioriza la información local antes de consultar a Gemini.
@@ -108,9 +118,11 @@ class ChatbotLogic:
 
         # 2. Si no se encuentra una respuesta local, consultar a Gemini
         logger.info("Consultando a Gemini API.")
-        return self.gemini_api.send_message(message)
+        gemini = self._ensure_gemini()
+        return gemini.send_message(message, history=history)
 
     def start_new_chat_session(self):
         """Reinicia la sesión de chat de Gemini."""
-        self.gemini_api.start_new_chat()
+        if self.gemini_api is not None:
+            self.gemini_api.start_new_chat()
 
