@@ -130,6 +130,36 @@ Proporciona una experiencia de usuario moderna y responsive con CustomTkinter. [
 
 python src/main.py
 
+## ▲ Despliegue en Vercel
+
+Este proyecto original es una app de escritorio (CustomTkinter). Vercel no puede ejecutar una GUI de escritorio, así que para desplegarlo se agregó una **API serverless**.
+
+### Endpoints
+
+- `GET /api` → estado y ayuda
+- `POST /api/chat` → responde usando la lógica híbrida (datos locales + Gemini)
+
+Body ejemplo:
+
+```json
+{ "message": "¿Qué es Ingeniería de Sistemas?" }
+```
+
+### Configuración en Vercel
+
+1. Importa el repositorio en Vercel.
+2. En **Project Settings → Environment Variables**, agrega:
+    - `GEMINI_API_KEY` = tu clave
+3. Deploy.
+
+### Probar en producción
+
+```bash
+curl -X POST https://<tu-app>.vercel.app/api/chat \
+   -H "Content-Type: application/json" \
+   -d "{\"message\":\"Hola\"}"
+```
+
 
 
 
